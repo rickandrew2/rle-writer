@@ -36,19 +36,16 @@
   .card-desc{font-size:11px;color:var(--text3);margin-top:1px;}
   .card-body{padding:18px 22px;}
   label{font-size:10px;font-weight:500;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;display:block;margin-bottom:6px;}
-  input[type=text],input[type=number],select{width:100%;padding:10px 13px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'Epilogue',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
-  input:focus,select:focus{border-color:var(--green-mid);}
+  input[type=text],input[type=number],select,textarea{width:100%;padding:10px 13px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'Epilogue',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
+  input:focus,textarea:focus{border-color:var(--green-mid);}
+  textarea{resize:vertical;line-height:1.5;}
   .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
   .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
-
-  /* Day entries */
   .days-wrap{display:flex;flex-direction:column;gap:10px;}
   .day-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
   .day-card-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
   .day-badge{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--green);background:var(--green-dim);border:1px solid var(--green-mid);border-radius:5px;padding:2px 10px;flex-shrink:0;}
-  .day-card textarea{width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Epilogue',sans-serif;font-size:12px;line-height:1.6;outline:none;resize:vertical;min-height:70px;transition:border-color .2s;}
-  .day-card textarea:focus{border-color:var(--green-mid);}
-  .day-card textarea::placeholder{color:var(--text3);}
+  .day-card textarea{background:var(--bg);min-height:70px;}
   .day-footer{display:flex;align-items:flex-end;gap:10px;margin-top:10px;flex-wrap:wrap;}
   .day-footer>div{display:flex;flex-direction:column;}
   .hol-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer;padding-bottom:2px;}
@@ -57,16 +54,12 @@
   .del-btn:hover{color:var(--red);}
   .add-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border:1px dashed var(--border2);border-radius:var(--r);background:transparent;color:var(--text3);font-family:'Epilogue',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;width:100%;margin-top:8px;}
   .add-btn:hover{border-color:var(--green);color:var(--green);}
-
-  /* Week number */
   .wk-row{display:flex;align-items:center;gap:8px;}
   .wk-btn{width:34px;height:34px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
   .wk-btn:hover{border-color:var(--border2);color:var(--text);}
-
   .send-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 24px;border-radius:var(--r);border:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;width:100%;background:var(--green);color:#000;}
   .send-btn:hover:not(:disabled){background:#00ffb3;transform:translateY(-1px);box-shadow:0 4px 24px #00e5a030;}
   .send-btn:disabled{background:var(--bg3);color:var(--text3);cursor:not-allowed;border:1px solid var(--border);}
-
   .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg2);border:1px solid var(--border2);color:var(--text);padding:11px 22px;border-radius:100px;font-size:13px;opacity:0;transition:all .3s;pointer-events:none;z-index:999;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .toast.success{border-color:var(--green-mid);color:var(--green);}
@@ -82,7 +75,7 @@
     <div class="brand-mark">R</div>
     <div class="brand-text">
       <h1>RLE Doc Writer</h1>
-      <p>Matches your exact Google Doc format (Week 1–4 style)</p>
+      <p>Times New Roman · Bold · Caps · Matches your exact format</p>
     </div>
   </div>
   <div id="authArea">
@@ -91,13 +84,12 @@
 </header>
 
 <div class="container">
-
   <div class="tip">
     <span>💡</span>
-    <span>Tell Claude your raw notes in chat → Claude gives you polished text per day → paste here → <b>Send to Google Docs</b> writes a properly formatted table that matches your existing Week 1–4 style.</span>
+    <span>Tell Claude your raw notes → Claude polishes each day → paste here → <b>Send to Google Docs</b> writes a properly formatted table with Times New Roman, bold headers, caps — matching your existing weeks exactly.</span>
   </div>
 
-  <!-- Settings -->
+  <!-- Step 1: Settings -->
   <div class="card">
     <div class="card-header">
       <div class="card-num">1</div>
@@ -116,7 +108,7 @@
     </div>
   </div>
 
-  <!-- Week entries -->
+  <!-- Step 2: Days -->
   <div class="card">
     <div class="card-header">
       <div class="card-num">2</div>
@@ -132,8 +124,9 @@
             <button class="wk-btn" onclick="changeWeek(1)">+</button>
           </div>
         </div>
-        <div><label>Weekly Reflection (optional)</label>
-          <textarea id="reflection" style="width:100%;padding:10px 13px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'Epilogue',sans-serif;font-size:12px;outline:none;resize:vertical;min-height:38px;line-height:1.5;transition:border-color .2s;" placeholder="Optional summary paragraph..."></textarea>
+        <div>
+          <label>Weekly Reflection (optional)</label>
+          <textarea id="reflection" style="min-height:38px;" placeholder="Optional summary paragraph..."></textarea>
         </div>
       </div>
       <label style="margin-bottom:10px;">Daily Entries</label>
@@ -142,11 +135,11 @@
     </div>
   </div>
 
-  <!-- Send -->
+  <!-- Step 3: Send -->
   <div class="card">
     <div class="card-header">
       <div class="card-num">3</div>
-      <div><div class="card-title">Send to Google Docs</div><div class="card-desc">Appends a new week section matching your existing format exactly</div></div>
+      <div><div class="card-title">Send to Google Docs</div><div class="card-desc">Writes Times New Roman, bold, caps — exact match to your existing weeks</div></div>
     </div>
     <div class="card-body">
       <button class="send-btn" id="sendBtn" onclick="send()" disabled>
@@ -155,7 +148,6 @@
       <div id="status" style="text-align:center;font-size:12px;color:var(--text3);margin-top:10px;min-height:18px;"></div>
     </div>
   </div>
-
 </div>
 <div class="toast" id="toast"></div>
 
@@ -165,13 +157,7 @@ const SCOPES = 'https://www.googleapis.com/auth/documents';
 let accessToken = null, tokenClient = null, dayCount = 0;
 
 const SAVE_IDS = ['docId','studentName','program','supervisor','coordinator','weekNum'];
-const DEFAULT_DAYS = [
-  {label:'Monday',   date:''},
-  {label:'Tuesday',  date:''},
-  {label:'Wednesday',date:''},
-  {label:'Thursday', date:''},
-  {label:'Friday',   date:''},
-];
+const DEFAULT_DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
 
 window.addEventListener('DOMContentLoaded', () => {
   SAVE_IDS.forEach(id => {
@@ -179,7 +165,7 @@ window.addEventListener('DOMContentLoaded', () => {
     if (v) document.getElementById(id).value = v;
     document.getElementById(id).addEventListener('input', e => localStorage.setItem('rle_'+id, e.target.value));
   });
-  DEFAULT_DAYS.forEach(d => addDay(d));
+  DEFAULT_DAYS.forEach(label => addDay({ label }));
   loadGoogleScript();
 });
 
@@ -213,8 +199,7 @@ function toggleHol(id) {
   document.getElementById('hr-'+id).value = isHol ? 0 : 8;
   const acc = document.getElementById('acc-'+id);
   acc.disabled = isHol;
-  if (isHol) acc.value = 'Holiday — no work rendered.';
-  else if (acc.value === 'Holiday — no work rendered.') acc.value = '';
+  acc.value = isHol ? 'Holiday — no work rendered.' : '';
 }
 
 function getDays() {
@@ -267,7 +252,35 @@ function signOut() {
   document.getElementById('sendTxt').textContent = 'Sign in with Google to send';
 }
 
-// ── Send ──
+// ── Formatting helpers ──
+// Returns a textStyle object: Times New Roman, not italic, optional bold
+function ts(bold=false) {
+  return { bold, italic: false, weightedFontFamily: { fontFamily: 'Times New Roman', weight: bold ? 700 : 400 } };
+}
+
+// Build a updateTextStyle request for a given range
+function styleRange(startIndex, endIndex, bold=false) {
+  return {
+    updateTextStyle: {
+      range: { startIndex, endIndex },
+      textStyle: ts(bold),
+      fields: 'bold,italic,weightedFontFamily'
+    }
+  };
+}
+
+// Build a paragraphStyle request (alignment)
+function alignPara(startIndex, endIndex, alignment='START') {
+  return {
+    updateParagraphStyle: {
+      range: { startIndex, endIndex },
+      paragraphStyle: { alignment },
+      fields: 'alignment'
+    }
+  };
+}
+
+// ── Main send ──
 async function send() {
   if (!accessToken) { toast('Please sign in first!','error'); return; }
   const days = getDays();
@@ -275,10 +288,10 @@ async function send() {
 
   const docId   = document.getElementById('docId').value.trim();
   const weekNum = document.getElementById('weekNum').value;
-  const name    = document.getElementById('studentName').value.trim();
-  const prog    = document.getElementById('program').value.trim();
-  const sup     = document.getElementById('supervisor').value.trim();
-  const coord   = document.getElementById('coordinator').value.trim();
+  const name    = document.getElementById('studentName').value.trim().toUpperCase();
+  const prog    = document.getElementById('program').value.trim().toUpperCase();
+  const sup     = document.getElementById('supervisor').value.trim().toUpperCase();
+  const coord   = document.getElementById('coordinator').value.trim().toUpperCase();
   const ref     = document.getElementById('reflection').value.trim();
   const total   = days.reduce((s,d)=>s+d.hrs,0);
 
@@ -289,92 +302,180 @@ async function send() {
   setStatus('Fetching document…');
 
   try {
-    // Step 1 — get current doc end index
+    // ── STEP 1: Get current end index ──
     const r1 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
-    const endIdx = r1.body.content.at(-1).endIndex - 1;
+    const insertAt = r1.body.content.at(-1).endIndex - 1;
 
-    // Step 2 — build header text block (matches Week 1-4 format exactly)
-    const headerText =
-      `\nName of Student Trainee\t:\t ${name}\n`+
-      `Program\t\t\t:\t ${prog}\n`+
-      `Name Of Company\t\t:\t TECH EXECUTIVE LABS I.T. SOLUTIONS\n`+
-      `Department\t\t:\t IT DEPARTMENT\n`+
-      `Company Address\t\t:\t BON GIORNO HOMES, BRGY. MUNTINGPULO, LIPA CITY\n\n`+
-      `RELATED LEARNING EXPERIENCE\n\n`;
+    // ── STEP 2: Insert all plain text first ──
+    // We track character offsets so we can style them after
+    setStatus('Inserting content…');
 
-    setStatus('Inserting header…');
-    await gBatch(docId, [{ insertText: { location: { index: endIdx }, text: headerText } }]);
+    const metaBlock =
+      `\nName of Student Trainee\t:\t${name}\n`+
+      `Program\t\t\t:\t${prog}\n`+
+      `Name Of Company\t\t:\tTECH EXECUTIVE LABS I.T. SOLUTIONS\n`+
+      `Department\t\t:\tIT DEPARTMENT\n`+
+      `Company Address\t\t:\tBON GIORNO HOMES, BRGY. MUNTINGPULO, LIPA CITY\n\n`+
+      `RELATED LEARNING EXPERIENCE\n`+
+      `Week ${weekNum}\n\n`;
 
-    // Step 3 — re-fetch to get new end index, insert table
-    setStatus('Creating table…');
+    await gBatch(docId, [{ insertText: { location: { index: insertAt }, text: metaBlock } }]);
+
+    // ── STEP 3: Apply text styles to meta block ──
+    setStatus('Applying formatting…');
     const r2 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
-    const endIdx2 = r2.body.content.at(-1).endIndex - 1;
+    const metaStart = insertAt + 1; // skip leading \n
 
-    const numRows = days.length + 2; // header row + day rows + total row
+    // Find paragraph ranges for meta block by scanning content
+    // We'll apply Times New Roman + no-italic to the whole meta block range
+    const metaEnd = insertAt + metaBlock.length;
+
+    // Style entire meta block: TNR, not italic
+    const styleReqs = [ styleRange(metaStart, metaEnd, false) ];
+
+    // Bold the values in name/program lines — find them by scanning paragraphs
+    // Simpler: bold specific lines by finding their paragraph indices
+    const content2 = r2.body.content;
+    for (const el of content2) {
+      if (!el.paragraph) continue;
+      const pStart = el.startIndex;
+      const pEnd   = el.endIndex;
+      if (pStart < metaStart || pStart >= metaEnd) continue;
+      const text = el.paragraph.elements?.map(e=>e.textRun?.content||'').join('').trim();
+
+      // Bold: student name value, "RELATED LEARNING EXPERIENCE", "Week X", supervisor/coord values
+      if (
+        text === name ||
+        text.includes('RELATED LEARNING EXPERIENCE') ||
+        text.startsWith('Week ') ||
+        text === sup ||
+        text === coord
+      ) {
+        styleReqs.push(styleRange(pStart, pEnd-1, true));
+      }
+
+      // Center align RELATED LEARNING EXPERIENCE and Week line
+      if (text.includes('RELATED LEARNING EXPERIENCE') || text.startsWith('Week ')) {
+        styleReqs.push(alignPara(pStart, pEnd-1, 'CENTER'));
+      }
+    }
+
+    await gBatch(docId, styleReqs);
+
+    // ── STEP 4: Insert table ──
+    setStatus('Creating table…');
+    const r3 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
+    const tableInsertAt = r3.body.content.at(-1).endIndex - 1;
+
     await gBatch(docId, [{
-      insertTable: { rows: numRows, columns: 3, location: { index: endIdx2 } }
+      insertTable: { rows: days.length + 2, columns: 3, location: { index: tableInsertAt } }
     }]);
 
-    // Step 4 — re-fetch to find table cells
+    // ── STEP 5: Fill table cells ──
     setStatus('Filling table cells…');
-    const r3 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
+    const r4 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
 
-    // Find last table inserted
-    const tables = [];
-    for (const el of r3.body.content) { if (el.table) tables.push(el); }
-    const tableEl = tables[tables.length - 1];
-    if (!tableEl) throw new Error('Could not find inserted table');
-    const tbl = tableEl.table;
+    const tables = r4.body.content.filter(el => el.table);
+    const tbl = tables[tables.length-1].table;
 
-    function cellIdx(row, col) {
+    function cellStart(row, col) {
       return tbl.tableRows[row].tableCells[col].content[0].startIndex;
     }
 
-    // Build all cell inserts — must be sorted descending by index
-    const cellReqs = [];
+    // Insert cell text — descending order
+    const cellInserts = [];
 
-    // Header row: DATE DAY | ACCOMPLISHMENTS | NO. OF HOURS RENDERED
-    cellReqs.push({ insertText: { location: { index: cellIdx(0,0) }, text: 'DATE DAY' }});
-    cellReqs.push({ insertText: { location: { index: cellIdx(0,1) }, text: 'ACCOMPLISHMENTS' }});
-    cellReqs.push({ insertText: { location: { index: cellIdx(0,2) }, text: 'NO. OF HOURS RENDERED' }});
+    // Header row
+    cellInserts.push({ insertText: { location: { index: cellStart(0,0) }, text: 'DATE\nDAY' }});
+    cellInserts.push({ insertText: { location: { index: cellStart(0,1) }, text: 'ACCOMPLISHMENTS' }});
+    cellInserts.push({ insertText: { location: { index: cellStart(0,2) }, text: 'NO. OF HOURS RENDERED' }});
 
     // Day rows
     days.forEach((d, i) => {
       const row = i + 1;
-      const dateDay = [d.date, d.day].filter(Boolean).join('\n');
-      const accText = d.acc || ' ';
-      const hrsText = String(d.hrs);
-      cellReqs.push({ insertText: { location: { index: cellIdx(row,0) }, text: dateDay || ' ' }});
-      cellReqs.push({ insertText: { location: { index: cellIdx(row,1) }, text: accText }});
-      cellReqs.push({ insertText: { location: { index: cellIdx(row,2) }, text: hrsText }});
+      const dateDay = d.date && d.day ? `${d.date}\n${d.day}` : (d.date || d.day || ' ');
+      cellInserts.push({ insertText: { location: { index: cellStart(row,0) }, text: dateDay }});
+      cellInserts.push({ insertText: { location: { index: cellStart(row,1) }, text: d.acc||' ' }});
+      cellInserts.push({ insertText: { location: { index: cellStart(row,2) }, text: String(d.hrs) }});
     });
 
     // Total row
     const totalRow = days.length + 1;
-    cellReqs.push({ insertText: { location: { index: cellIdx(totalRow,0) }, text: 'TOTAL' }});
-    cellReqs.push({ insertText: { location: { index: cellIdx(totalRow,1) }, text: ' ' }});
-    cellReqs.push({ insertText: { location: { index: cellIdx(totalRow,2) }, text: total+' hours' }});
+    cellInserts.push({ insertText: { location: { index: cellStart(totalRow,0) }, text: 'TOTAL' }});
+    cellInserts.push({ insertText: { location: { index: cellStart(totalRow,1) }, text: ' ' }});
+    cellInserts.push({ insertText: { location: { index: cellStart(totalRow,2) }, text: `${total} hours` }});
 
-    // Sort descending by index to avoid offset shifting
-    cellReqs.sort((a,b) => b.insertText.location.index - a.insertText.location.index);
-    await gBatch(docId, cellReqs);
+    // Sort descending
+    cellInserts.sort((a,b) => b.insertText.location.index - a.insertText.location.index);
+    await gBatch(docId, cellInserts);
 
-    // Step 5 — append footer + optional reflection
-    setStatus('Adding footer…');
-    const r4 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
-    const endIdx4 = r4.body.content.at(-1).endIndex - 1;
+    // ── STEP 6: Style table cells ──
+    setStatus('Styling table…');
+    const r5 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
+    const tables5 = r5.body.content.filter(el => el.table);
+    const tbl5 = tables5[tables5.length-1].table;
 
-    let footer = `\nPrepared by:\n\n${name}\nStudent Trainee\n\nNoted:\n\n${sup}\t\t\t\t${coord}\nTraining Supervisor\t\t\t\tOJT Coordinator, CICS\n`;
-    if (ref) footer += `\nWeekly Reflection\n${ref}\n`;
+    const tableStyleReqs = [];
 
-    await gBatch(docId, [{ insertText: { location: { index: endIdx4 }, text: footer } }]);
+    tbl5.tableRows.forEach((row, rowIdx) => {
+      row.tableCells.forEach((cell, colIdx) => {
+        cell.content.forEach(para => {
+          if (!para.paragraph) return;
+          const pStart = para.startIndex;
+          const pEnd   = para.endIndex - 1;
+          if (pStart >= pEnd) return;
 
-    setStatus(`<span style="color:var(--green)">✓ Week ${weekNum} written to your Google Doc!</span> <a href="https://docs.google.com/document/d/${docId}/edit" target="_blank" style="color:var(--blue);text-decoration:none;">Open doc →</a>`);
-    toast(`Week ${weekNum} written successfully ✓`,'success');
+          const isHeaderRow  = rowIdx === 0;
+          const isTotalRow   = rowIdx === tbl5.tableRows.length - 1;
+          const isHoursCol   = colIdx === 2;
+          const bold = isHeaderRow || isTotalRow;
+
+          tableStyleReqs.push(styleRange(pStart, pEnd, bold));
+
+          // Center align hours column and header row
+          if (isHeaderRow || isHoursCol || isTotalRow) {
+            tableStyleReqs.push(alignPara(pStart, pEnd, 'CENTER'));
+          }
+        });
+      });
+    });
+
+    await gBatch(docId, tableStyleReqs);
+
+    // ── STEP 7: Footer ──
+    setStatus('Adding signatures…');
+    const r6 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
+    const footerAt = r6.body.content.at(-1).endIndex - 1;
+
+    const footerText =
+      `\nPrepared by:\n\n${name}\nStudent Trainee\n\nNoted:\n\n`+
+      `${sup}\t\t\t${coord}\n`+
+      `Training Supervisor\t\t\t\tOJT Coordinator, CICS\n`+
+      (ref ? `\nWeekly Reflection\n${ref}\n` : '');
+
+    await gBatch(docId, [{ insertText: { location: { index: footerAt }, text: footerText } }]);
+
+    // Style footer
+    const r7 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
+    const footerStyleReqs = [];
+    for (const el of r7.body.content) {
+      if (!el.paragraph) continue;
+      const pStart = el.startIndex;
+      const pEnd   = el.endIndex - 1;
+      if (pStart < footerAt || pEnd <= pStart) continue;
+      const text = el.paragraph.elements?.map(e=>e.textRun?.content||'').join('').trim();
+      const isBold = text === name || text === sup || text === coord || text.includes(sup) || text.includes(coord);
+      footerStyleReqs.push(styleRange(pStart, pEnd, isBold));
+    }
+    if (footerStyleReqs.length) await gBatch(docId, footerStyleReqs);
+
+    setStatus(`<span style="color:var(--green)">✓ Week ${weekNum} written successfully!</span> <a href="https://docs.google.com/document/d/${docId}/edit" target="_blank" style="color:var(--blue);text-decoration:none;">Open doc →</a>`);
+    toast(`Week ${weekNum} written to Google Docs ✓`,'success');
 
   } catch(e) {
     setStatus(`<span style="color:var(--red)">⚠️ ${e.message}</span>`);
     toast('Error: '+e.message,'error');
+    console.error(e);
   }
 
   btn.disabled = false;
@@ -382,7 +483,6 @@ async function send() {
   document.getElementById('sendTxt').textContent = 'Send to Google Docs';
 }
 
-// ── Helpers ──
 async function gFetch(url) {
   const res = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
   const data = await res.json();
