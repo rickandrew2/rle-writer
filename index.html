@@ -14,10 +14,10 @@
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   body{font-family:'Epilogue',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
-  header{position:relative;z-index:1;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:var(--bg);}
+  header{padding:18px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
   .brand{display:flex;align-items:center;gap:14px;}
   .brand-mark{width:34px;height:34px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#000;}
-  .brand-text h1{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);}
+  .brand-text h1{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;}
   .brand-text p{font-size:11px;color:var(--text3);margin-top:1px;}
   #authArea{display:flex;align-items:center;gap:8px;}
   .auth-pill{display:flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid var(--border2);border-radius:100px;background:var(--bg2);font-size:12px;color:var(--text2);cursor:pointer;transition:all .2s;font-family:'Epilogue',sans-serif;}
@@ -26,52 +26,48 @@
   .auth-pill .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
   .signout{background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;font-family:'Epilogue',sans-serif;}
   .signout:hover{color:var(--red);}
-  .container{position:relative;z-index:1;flex:1;max-width:900px;width:100%;margin:0 auto;padding:40px 40px;display:flex;flex-direction:column;gap:24px;}
-  .how-it-works{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px 22px;display:flex;align-items:flex-start;gap:14px;}
-  .hiw-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
-  .hiw-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px;}
-  .hiw-steps{display:flex;flex-direction:column;gap:3px;}
-  .hiw-step{font-size:12px;color:var(--text2);display:flex;gap:8px;}
-  .hiw-step span:first-child{color:var(--green);font-weight:600;flex-shrink:0;}
-  .step{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
-  .step-header{padding:18px 22px;display:flex;align-items:center;gap:14px;}
-  .step-num{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;background:var(--bg3);border:1px solid var(--border2);color:var(--text3);}
-  .step-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--text);}
-  .step-desc{font-size:11px;color:var(--text3);margin-top:2px;}
-  .step-body{padding:0 22px 22px;}
+  .container{flex:1;max-width:900px;width:100%;margin:0 auto;padding:36px 40px;display:flex;flex-direction:column;gap:22px;}
+  .tip{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:16px 20px;display:flex;gap:12px;font-size:12px;color:var(--text2);line-height:1.6;}
+  .tip b{color:var(--green);}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+  .card-header{padding:16px 22px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);}
+  .card-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;background:var(--bg3);border:1px solid var(--border2);color:var(--text3);flex-shrink:0;}
+  .card-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;}
+  .card-desc{font-size:11px;color:var(--text3);margin-top:1px;}
+  .card-body{padding:18px 22px;}
   label{font-size:10px;font-weight:500;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;display:block;margin-bottom:6px;}
   input[type=text],input[type=number],select{width:100%;padding:10px 13px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'Epilogue',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
   input:focus,select:focus{border-color:var(--green-mid);}
-  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
 
   /* Day entries */
-  .days-container{display:flex;flex-direction:column;gap:10px;}
-  .day-entry{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px;}
-  .day-entry-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-  .day-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--green);background:var(--green-dim);border:1px solid var(--green-mid);border-radius:5px;padding:2px 10px;}
-  .day-entry textarea{width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Epilogue',sans-serif;font-size:12px;line-height:1.6;outline:none;resize:vertical;min-height:64px;transition:border-color .2s;}
-  .day-entry textarea:focus{border-color:var(--green-mid);}
-  .day-entry textarea::placeholder{color:var(--text3);}
-  .day-meta{display:flex;align-items:center;gap:10px;margin-top:8px;}
-  .day-meta input[type=text]{flex:1;}
-  .day-meta input[type=number]{width:70px;}
-  .day-meta label{margin:0;white-space:nowrap;}
-  .holiday-check{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer;}
-  .holiday-check input{width:14px;height:14px;cursor:pointer;}
-  .del-day{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;margin-left:auto;padding:2px 6px;border-radius:5px;}
-  .del-day:hover{color:var(--red);}
-  .add-day-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border:1px dashed var(--border2);border-radius:var(--r);background:transparent;color:var(--text3);font-family:'Epilogue',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;width:100%;}
-  .add-day-btn:hover{border-color:var(--green);color:var(--green);}
+  .days-wrap{display:flex;flex-direction:column;gap:10px;}
+  .day-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;}
+  .day-card-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .day-badge{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--green);background:var(--green-dim);border:1px solid var(--green-mid);border-radius:5px;padding:2px 10px;flex-shrink:0;}
+  .day-card textarea{width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Epilogue',sans-serif;font-size:12px;line-height:1.6;outline:none;resize:vertical;min-height:70px;transition:border-color .2s;}
+  .day-card textarea:focus{border-color:var(--green-mid);}
+  .day-card textarea::placeholder{color:var(--text3);}
+  .day-footer{display:flex;align-items:flex-end;gap:10px;margin-top:10px;flex-wrap:wrap;}
+  .day-footer>div{display:flex;flex-direction:column;}
+  .hol-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer;padding-bottom:2px;}
+  .hol-row input{width:14px;height:14px;cursor:pointer;accent-color:var(--green);}
+  .del-btn{background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;margin-left:auto;padding:4px 7px;border-radius:5px;align-self:flex-end;}
+  .del-btn:hover{color:var(--red);}
+  .add-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border:1px dashed var(--border2);border-radius:var(--r);background:transparent;color:var(--text3);font-family:'Epilogue',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;width:100%;margin-top:8px;}
+  .add-btn:hover{border-color:var(--green);color:var(--green);}
 
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:var(--r);border:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
-  .btn-primary{background:var(--green);color:#000;width:100%;}
-  .btn-primary:hover:not(:disabled){background:#00ffb3;transform:translateY(-1px);box-shadow:0 4px 24px #00e5a030;}
-  .btn-primary:disabled{background:var(--bg3);color:var(--text3);cursor:not-allowed;border:1px solid var(--border);}
-  .week-row{display:flex;align-items:center;gap:8px;}
-  .week-btn{width:34px;height:34px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
-  .week-btn:hover{border-color:var(--border2);color:var(--text);}
-  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg2);border:1px solid var(--border2);color:var(--text);padding:11px 22px;border-radius:100px;font-size:13px;opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap;}
+  /* Week number */
+  .wk-row{display:flex;align-items:center;gap:8px;}
+  .wk-btn{width:34px;height:34px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+  .wk-btn:hover{border-color:var(--border2);color:var(--text);}
+
+  .send-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 24px;border-radius:var(--r);border:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;width:100%;background:var(--green);color:#000;}
+  .send-btn:hover:not(:disabled){background:#00ffb3;transform:translateY(-1px);box-shadow:0 4px 24px #00e5a030;}
+  .send-btn:disabled{background:var(--bg3);color:var(--text3);cursor:not-allowed;border:1px solid var(--border);}
+
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg2);border:1px solid var(--border2);color:var(--text);padding:11px 22px;border-radius:100px;font-size:13px;opacity:0;transition:all .3s;pointer-events:none;z-index:999;}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
   .toast.success{border-color:var(--green-mid);color:var(--green);}
   .toast.error{border-color:#ff556640;color:var(--red);}
@@ -86,7 +82,7 @@
     <div class="brand-mark">R</div>
     <div class="brand-text">
       <h1>RLE Doc Writer</h1>
-      <p>Fill in your week · Writes a proper table to Google Docs</p>
+      <p>Matches your exact Google Doc format (Week 1–4 style)</p>
     </div>
   </div>
   <div id="authArea">
@@ -96,75 +92,67 @@
 
 <div class="container">
 
-  <div class="how-it-works">
-    <div class="hiw-icon">💡</div>
-    <div>
-      <div class="hiw-title">Weekly workflow</div>
-      <div class="hiw-steps">
-        <div class="hiw-step"><span>1.</span><span>Tell Claude your raw daily notes in chat → Claude gives you polished accomplishments</span></div>
-        <div class="hiw-step"><span>2.</span><span>Paste each day's polished text into the fields below</span></div>
-        <div class="hiw-step"><span>3.</span><span>Click Send — a properly formatted table gets written directly to your Google Doc sub-tab</span></div>
-      </div>
-    </div>
+  <div class="tip">
+    <span>💡</span>
+    <span>Tell Claude your raw notes in chat → Claude gives you polished text per day → paste here → <b>Send to Google Docs</b> writes a properly formatted table that matches your existing Week 1–4 style.</span>
   </div>
 
-  <!-- Step 1: Settings -->
-  <div class="step">
-    <div class="step-header">
-      <div class="step-num">1</div>
-      <div><div class="step-title">Document Settings</div><div class="step-desc">Saved automatically in your browser</div></div>
+  <!-- Settings -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">1</div>
+      <div><div class="card-title">Document Settings</div><div class="card-desc">Saved in your browser automatically</div></div>
     </div>
-    <div class="step-body">
-      <div class="row2" style="margin-bottom:12px;">
+    <div class="card-body">
+      <div class="g2" style="margin-bottom:12px;">
         <div><label>Google Doc ID</label><input type="text" id="docId" value="17j0_Qc0U5BjT_mv8NpiNxRs1IP9DoofSNoxAftttXI8"/></div>
         <div><label>Student Name</label><input type="text" id="studentName" value="RICK ANDREW M. MACAPAGAL"/></div>
       </div>
-      <div class="row2">
+      <div class="g3">
+        <div><label>Program</label><input type="text" id="program" value="BSIT - BUSINESS ANALYTICS"/></div>
         <div><label>Training Supervisor</label><input type="text" id="supervisor" value="Mr. JAZZON H. PEREZ"/></div>
         <div><label>OJT Coordinator</label><input type="text" id="coordinator" value="Mr. DIONECES O. ALIMOREN"/></div>
       </div>
     </div>
   </div>
 
-  <!-- Step 2: Week entries -->
-  <div class="step">
-    <div class="step-header">
-      <div class="step-num">2</div>
-      <div><div class="step-title">Enter Your Week</div><div class="step-desc">Paste Claude's polished accomplishments per day</div></div>
+  <!-- Week entries -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">2</div>
+      <div><div class="card-title">Weekly Accomplishments</div><div class="card-desc">One field per day — paste Claude's polished text</div></div>
     </div>
-    <div class="step-body">
-      <div class="row2" style="margin-bottom:16px;">
+    <div class="card-body">
+      <div class="g2" style="margin-bottom:18px;">
         <div>
           <label>Week Number</label>
-          <div class="week-row">
-            <button class="week-btn" onclick="changeWeek(-1)">−</button>
+          <div class="wk-row">
+            <button class="wk-btn" onclick="changeWeek(-1)">−</button>
             <input type="number" id="weekNum" value="5" min="1" max="52" style="text-align:center;font-family:'Syne',sans-serif;font-weight:700;font-size:16px;"/>
-            <button class="week-btn" onclick="changeWeek(1)">+</button>
+            <button class="wk-btn" onclick="changeWeek(1)">+</button>
           </div>
         </div>
-        <div>
-          <label>Date Range</label>
-          <input type="text" id="dateRange" placeholder="e.g. March 09–13, 2026"/>
+        <div><label>Weekly Reflection (optional)</label>
+          <textarea id="reflection" style="width:100%;padding:10px 13px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'Epilogue',sans-serif;font-size:12px;outline:none;resize:vertical;min-height:38px;line-height:1.5;transition:border-color .2s;" placeholder="Optional summary paragraph..."></textarea>
         </div>
       </div>
-
-      <label style="margin-bottom:10px;">Daily Accomplishments</label>
-      <div class="days-container" id="daysContainer"></div>
-      <button class="add-day-btn" onclick="addDay()" style="margin-top:10px;">＋ Add another day</button>
+      <label style="margin-bottom:10px;">Daily Entries</label>
+      <div class="days-wrap" id="daysWrap"></div>
+      <button class="add-btn" onclick="addDay()">＋ Add another day</button>
     </div>
   </div>
 
-  <!-- Step 3: Send -->
-  <div class="step">
-    <div class="step-header">
-      <div class="step-num">3</div>
-      <div><div class="step-title">Send to Google Docs</div><div class="step-desc">Creates a properly formatted table in a new Week sub-tab</div></div>
+  <!-- Send -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-num">3</div>
+      <div><div class="card-title">Send to Google Docs</div><div class="card-desc">Appends a new week section matching your existing format exactly</div></div>
     </div>
-    <div class="step-body">
-      <button class="btn btn-primary" id="sendBtn" onclick="sendToGoogleDocs()" disabled>
-        <span id="sendIcon">📄</span><span id="sendText">Sign in with Google to send</span>
+    <div class="card-body">
+      <button class="send-btn" id="sendBtn" onclick="send()" disabled>
+        <span id="sendIcon">📄</span><span id="sendTxt">Sign in with Google to send</span>
       </button>
-      <div id="sendStatus" style="text-align:center;font-size:12px;color:var(--text3);margin-top:10px;min-height:18px;"></div>
+      <div id="status" style="text-align:center;font-size:12px;color:var(--text3);margin-top:10px;min-height:18px;"></div>
     </div>
   </div>
 
@@ -174,21 +162,19 @@
 <script>
 const CLIENT_ID = '564861021362-qgt93dk2dpk6r90165unitk9qkgtml5f.apps.googleusercontent.com';
 const SCOPES = 'https://www.googleapis.com/auth/documents';
-let accessToken = null;
-let tokenClient = null;
-let dayCount = 0;
+let accessToken = null, tokenClient = null, dayCount = 0;
 
+const SAVE_IDS = ['docId','studentName','program','supervisor','coordinator','weekNum'];
 const DEFAULT_DAYS = [
-  {label:'Monday',   date:'March 09, 2026'},
-  {label:'Tuesday',  date:'March 10, 2026'},
-  {label:'Wednesday',date:'March 11, 2026'},
-  {label:'Thursday', date:'March 12, 2026'},
-  {label:'Friday',   date:'March 13, 2026'},
+  {label:'Monday',   date:''},
+  {label:'Tuesday',  date:''},
+  {label:'Wednesday',date:''},
+  {label:'Thursday', date:''},
+  {label:'Friday',   date:''},
 ];
 
 window.addEventListener('DOMContentLoaded', () => {
-  // Restore saved settings
-  ['docId','studentName','supervisor','coordinator','weekNum','dateRange'].forEach(id => {
+  SAVE_IDS.forEach(id => {
     const v = localStorage.getItem('rle_'+id);
     if (v) document.getElementById(id).value = v;
     document.getElementById(id).addEventListener('input', e => localStorage.setItem('rle_'+id, e.target.value));
@@ -206,38 +192,39 @@ function changeWeek(d) {
 function addDay(data={}) {
   const id = ++dayCount;
   const div = document.createElement('div');
-  div.className = 'day-entry'; div.id = 'de-'+id;
+  div.className = 'day-card'; div.id = 'dc-'+id;
   div.innerHTML = `
-    <div class="day-entry-header">
-      <span class="day-label">${data.label||'Day '+id}</span>
-      <button class="del-day" onclick="document.getElementById('de-${id}').remove()">✕</button>
+    <div class="day-card-top">
+      <span class="day-badge">${data.label||'Day '+id}</span>
+      <button class="del-btn" onclick="document.getElementById('dc-${id}').remove()">✕</button>
     </div>
     <textarea id="acc-${id}" placeholder="Paste Claude's polished accomplishment for this day...">${data.acc||''}</textarea>
-    <div class="day-meta">
-      <div style="flex:1"><label>Date</label><input type="text" id="date-${id}" value="${data.date||''}"/></div>
-      <div><label>Day</label><input type="text" id="dayname-${id}" value="${data.label||''}" style="width:100px;"/></div>
-      <div><label>Hours</label><input type="number" id="hrs-${id}" value="${data.holiday?0:8}" min="0" max="24" style="width:65px;"/></div>
-      <label class="holiday-check"><input type="checkbox" id="hol-${id}" ${data.holiday?'checked':''} onchange="toggleHoliday(${id})"/> Holiday</label>
+    <div class="day-footer">
+      <div><label>Date</label><input type="text" id="dt-${id}" value="${data.date||''}" placeholder="March 09, 2026" style="width:160px;"/></div>
+      <div><label>Day</label><input type="text" id="dn-${id}" value="${data.label||''}" style="width:110px;"/></div>
+      <div><label>Hours</label><input type="number" id="hr-${id}" value="8" min="0" max="24" style="width:65px;"/></div>
+      <label class="hol-row"><input type="checkbox" id="hol-${id}" onchange="toggleHol(${id})"/> Holiday</label>
     </div>`;
-  document.getElementById('daysContainer').appendChild(div);
+  document.getElementById('daysWrap').appendChild(div);
 }
 
-function toggleHoliday(id) {
+function toggleHol(id) {
   const isHol = document.getElementById('hol-'+id).checked;
-  document.getElementById('hrs-'+id).value = isHol ? 0 : 8;
+  document.getElementById('hr-'+id).value = isHol ? 0 : 8;
   const acc = document.getElementById('acc-'+id);
   acc.disabled = isHol;
   if (isHol) acc.value = 'Holiday — no work rendered.';
+  else if (acc.value === 'Holiday — no work rendered.') acc.value = '';
 }
 
 function getDays() {
-  return Array.from(document.querySelectorAll('.day-entry')).map(el => {
-    const id = el.id.replace('de-','');
+  return Array.from(document.querySelectorAll('.day-card')).map(el => {
+    const id = el.id.replace('dc-','');
     return {
-      date: document.getElementById('date-'+id)?.value||'',
-      day:  document.getElementById('dayname-'+id)?.value||'',
-      acc:  document.getElementById('acc-'+id)?.value||'',
-      hrs:  parseInt(document.getElementById('hrs-'+id)?.value)||0,
+      date: document.getElementById('dt-'+id)?.value.trim()||'',
+      day:  document.getElementById('dn-'+id)?.value.trim()||'',
+      acc:  document.getElementById('acc-'+id)?.value.trim()||' ',
+      hrs:  parseInt(document.getElementById('hr-'+id)?.value)||0,
       hol:  document.getElementById('hol-'+id)?.checked||false,
     };
   });
@@ -252,15 +239,15 @@ function loadGoogleScript() {
       google.accounts.id.initialize({ client_id: CLIENT_ID, callback: ()=>{} });
       tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: CLIENT_ID, scope: SCOPES,
-        callback: (resp) => {
-          if (resp.error) { showToast('Sign-in failed: '+resp.error,'error'); return; }
+        callback: resp => {
+          if (resp.error) { toast('Sign-in failed: '+resp.error,'error'); return; }
           accessToken = resp.access_token;
           document.getElementById('authArea').innerHTML =
             '<div class="auth-pill connected"><span class="dot"></span> Google connected</div>'+
             '<button class="signout" onclick="signOut()">sign out</button>';
           document.getElementById('sendBtn').disabled = false;
-          document.getElementById('sendText').textContent = 'Send to Google Docs';
-          showToast('Connected to Google ✓','success');
+          document.getElementById('sendTxt').textContent = 'Send to Google Docs';
+          toast('Connected to Google ✓','success');
         }
       });
     } catch(e){ console.warn(e); }
@@ -268,7 +255,7 @@ function loadGoogleScript() {
   document.head.appendChild(s);
 }
 function signIn() {
-  if (!tokenClient) { showToast('Please wait a moment…','error'); return; }
+  if (!tokenClient) { toast('Please wait a moment…','error'); return; }
   tokenClient.requestAccessToken();
 }
 function signOut() {
@@ -277,187 +264,146 @@ function signOut() {
   document.getElementById('authArea').innerHTML =
     '<button class="auth-pill" onclick="signIn()"><span class="dot"></span> Sign in with Google</button>';
   document.getElementById('sendBtn').disabled = true;
-  document.getElementById('sendText').textContent = 'Sign in with Google to send';
+  document.getElementById('sendTxt').textContent = 'Sign in with Google to send';
 }
 
-// ── Send to Google Docs ──
-async function sendToGoogleDocs() {
-  if (!accessToken) { showToast('Please sign in first!','error'); return; }
+// ── Send ──
+async function send() {
+  if (!accessToken) { toast('Please sign in first!','error'); return; }
   const days = getDays();
-  if (!days.some(d => d.acc && !d.hol)) { showToast('Please enter at least one day!','error'); return; }
+  if (!days.length) { toast('Add at least one day!','error'); return; }
 
-  const docId     = document.getElementById('docId').value.trim();
-  const weekNum   = document.getElementById('weekNum').value;
-  const name      = document.getElementById('studentName').value;
-  const sup       = document.getElementById('supervisor').value;
-  const coord     = document.getElementById('coordinator').value;
+  const docId   = document.getElementById('docId').value.trim();
+  const weekNum = document.getElementById('weekNum').value;
+  const name    = document.getElementById('studentName').value.trim();
+  const prog    = document.getElementById('program').value.trim();
+  const sup     = document.getElementById('supervisor').value.trim();
+  const coord   = document.getElementById('coordinator').value.trim();
+  const ref     = document.getElementById('reflection').value.trim();
+  const total   = days.reduce((s,d)=>s+d.hrs,0);
 
   const btn = document.getElementById('sendBtn');
   btn.disabled = true;
   document.getElementById('sendIcon').innerHTML = '<span class="spin"></span>';
-  document.getElementById('sendText').textContent = 'Writing to doc…';
-  setStatus('Connecting to Google Docs…');
+  document.getElementById('sendTxt').textContent = 'Writing to doc…';
+  setStatus('Fetching document…');
 
   try {
-    // 1. Get doc to find end index
-    const docRes = await fetch(`https://docs.googleapis.com/v1/documents/${docId}`,
-      { headers: { Authorization: `Bearer ${accessToken}` } });
-    const doc = await docRes.json();
-    if (doc.error) throw new Error(doc.error.message);
+    // Step 1 — get current doc end index
+    const r1 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
+    const endIdx = r1.body.content.at(-1).endIndex - 1;
 
-    const endIdx = doc.body.content.at(-1).endIndex - 1;
-    setStatus('Building table structure…');
+    // Step 2 — build header text block (matches Week 1-4 format exactly)
+    const headerText =
+      `\nName of Student Trainee\t:\t ${name}\n`+
+      `Program\t\t\t:\t ${prog}\n`+
+      `Name Of Company\t\t:\t TECH EXECUTIVE LABS I.T. SOLUTIONS\n`+
+      `Department\t\t:\t IT DEPARTMENT\n`+
+      `Company Address\t\t:\t BON GIORNO HOMES, BRGY. MUNTINGPULO, LIPA CITY\n\n`+
+      `RELATED LEARNING EXPERIENCE\n\n`;
 
-    const totalHours = days.reduce((s,d) => s+(d.hrs||0), 0);
+    setStatus('Inserting header…');
+    await gBatch(docId, [{ insertText: { location: { index: endIdx }, text: headerText } }]);
 
-    // 2. Build batchUpdate requests
-    // We'll insert text blocks then a table
-    const requests = [];
+    // Step 3 — re-fetch to get new end index, insert table
+    setStatus('Creating table…');
+    const r2 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
+    const endIdx2 = r2.body.content.at(-1).endIndex - 1;
 
-    // Insert section header text first
-    const header =
-      `\n${'═'.repeat(60)}\n`+
-      `WEEK ${weekNum} — RELATED LEARNING EXPERIENCE\n`+
-      `${'═'.repeat(60)}\n`+
-      `Student Trainee : ${name}\n`+
-      `Program         : BSIT - BUSINESS ANALYTICS\n`+
-      `Company         : TECH EXECUTIVE LABS I.T. SOLUTIONS\n`+
-      `Department      : IT DEPARTMENT\n\n`;
+    const numRows = days.length + 2; // header row + day rows + total row
+    await gBatch(docId, [{
+      insertTable: { rows: numRows, columns: 3, location: { index: endIdx2 } }
+    }]);
 
-    requests.push({ insertText: { location: { index: endIdx }, text: header } });
+    // Step 4 — re-fetch to find table cells
+    setStatus('Filling table cells…');
+    const r3 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
 
-    // Insert table after header
-    // Table: 1 header row + N day rows + 1 total row = rows count
-    const numRows = days.length + 2; // header + days + total
-    const numCols = 3;
+    // Find last table inserted
+    const tables = [];
+    for (const el of r3.body.content) { if (el.table) tables.push(el); }
+    const tableEl = tables[tables.length - 1];
+    if (!tableEl) throw new Error('Could not find inserted table');
+    const tbl = tableEl.table;
 
-    requests.push({
-      insertTable: {
-        rows: numRows,
-        columns: numCols,
-        location: { index: endIdx + header.length }
-      }
-    });
-
-    setStatus('Writing table content…');
-
-    // We need to get the doc again after inserting to find table cell indices
-    // Instead, build all content as styled text after the table is created
-    // Send header + table insert first
-    const batch1Res = await fetch(`https://docs.googleapis.com/v1/documents/${docId}:batchUpdate`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ requests })
-    });
-    const batch1 = await batch1Res.json();
-    if (batch1.error) throw new Error(batch1.error.message);
-
-    setStatus('Filling in table cells…');
-
-    // Re-fetch doc to find table cell positions
-    const doc2Res = await fetch(`https://docs.googleapis.com/v1/documents/${docId}`,
-      { headers: { Authorization: `Bearer ${accessToken}` } });
-    const doc2 = await doc2Res.json();
-    if (doc2.error) throw new Error(doc2.error.message);
-
-    // Find the table we just inserted (last table in doc)
-    const allTables = [];
-    function findTables(elements) {
-      for (const el of elements) {
-        if (el.table) allTables.push(el.table);
-        if (el.paragraph) {} // paragraphs don't nest tables directly
-      }
-    }
-    findTables(doc2.body.content);
-    const table = allTables[allTables.length - 1];
-    if (!table) throw new Error('Could not locate inserted table.');
-
-    // Build cell fill requests
-    const cellRequests = [];
-
-    // Helper: get cell start index
-    function cellIndex(row, col) {
-      return table.tableRows[row].tableCells[col].content[0].startIndex;
+    function cellIdx(row, col) {
+      return tbl.tableRows[row].tableCells[col].content[0].startIndex;
     }
 
-    // Header row
-    const headers = ['DATE / DAY', 'ACCOMPLISHMENTS', 'HOURS'];
-    headers.forEach((h, col) => {
-      cellRequests.push({
-        insertText: { location: { index: cellIndex(0, col) }, text: h }
-      });
-    });
+    // Build all cell inserts — must be sorted descending by index
+    const cellReqs = [];
+
+    // Header row: DATE DAY | ACCOMPLISHMENTS | NO. OF HOURS RENDERED
+    cellReqs.push({ insertText: { location: { index: cellIdx(0,0) }, text: 'DATE DAY' }});
+    cellReqs.push({ insertText: { location: { index: cellIdx(0,1) }, text: 'ACCOMPLISHMENTS' }});
+    cellReqs.push({ insertText: { location: { index: cellIdx(0,2) }, text: 'NO. OF HOURS RENDERED' }});
 
     // Day rows
     days.forEach((d, i) => {
       const row = i + 1;
-      const dateDay = `${d.date || d.day || 'N/A'}${d.date && d.day ? ' '+d.day : ''}`;
-      const accText = d.hol ? 'Holiday — no work rendered.' : (d.acc.trim() || 'No entry.');
-      const hrsText = d.hol ? '0' : String(d.hrs || 8);
-      cellRequests.push({ insertText: { location: { index: cellIndex(row,0) }, text: dateDay } });
-      cellRequests.push({ insertText: { location: { index: cellIndex(row,1) }, text: accText } });
-      cellRequests.push({ insertText: { location: { index: cellIndex(row,2) }, text: hrsText } });
+      const dateDay = [d.date, d.day].filter(Boolean).join('\n');
+      const accText = d.acc || ' ';
+      const hrsText = String(d.hrs);
+      cellReqs.push({ insertText: { location: { index: cellIdx(row,0) }, text: dateDay || ' ' }});
+      cellReqs.push({ insertText: { location: { index: cellIdx(row,1) }, text: accText }});
+      cellReqs.push({ insertText: { location: { index: cellIdx(row,2) }, text: hrsText }});
     });
 
     // Total row
     const totalRow = days.length + 1;
-    cellRequests.push({ insertText: { location: { index: cellIndex(totalRow,0) }, text: 'TOTAL' } });
-    cellRequests.push({ insertText: { location: { index: cellIndex(totalRow,1) }, text: ' ' } });
-    cellRequests.push({ insertText: { location: { index: cellIndex(totalRow,2) }, text: String(totalHours)+' hours' } });
+    cellReqs.push({ insertText: { location: { index: cellIdx(totalRow,0) }, text: 'TOTAL' }});
+    cellReqs.push({ insertText: { location: { index: cellIdx(totalRow,1) }, text: ' ' }});
+    cellReqs.push({ insertText: { location: { index: cellIdx(totalRow,2) }, text: total+' hours' }});
 
-    // Sort by index descending to avoid offset issues
-    cellRequests.sort((a,b) => {
-      const ai = a.insertText.location.index;
-      const bi = b.insertText.location.index;
-      return bi - ai;
-    });
+    // Sort descending by index to avoid offset shifting
+    cellReqs.sort((a,b) => b.insertText.location.index - a.insertText.location.index);
+    await gBatch(docId, cellReqs);
 
-    const batch2Res = await fetch(`https://docs.googleapis.com/v1/documents/${docId}:batchUpdate`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ requests: cellRequests })
-    });
-    const batch2 = await batch2Res.json();
-    if (batch2.error) throw new Error(batch2.error.message);
+    // Step 5 — append footer + optional reflection
+    setStatus('Adding footer…');
+    const r4 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
+    const endIdx4 = r4.body.content.at(-1).endIndex - 1;
 
-    // Append footer after table
-    setStatus('Adding signatures…');
-    const doc3Res = await fetch(`https://docs.googleapis.com/v1/documents/${docId}`,
-      { headers: { Authorization: `Bearer ${accessToken}` } });
-    const doc3 = await doc3Res.json();
-    const newEnd = doc3.body.content.at(-1).endIndex - 1;
+    let footer = `\nPrepared by:\n\n${name}\nStudent Trainee\n\nNoted:\n\n${sup}\t\t\t\t${coord}\nTraining Supervisor\t\t\t\tOJT Coordinator, CICS\n`;
+    if (ref) footer += `\nWeekly Reflection\n${ref}\n`;
 
-    const footer =
-      `\nPrepared by:\n${name}\nStudent Trainee\n\n`+
-      `Noted:\n${sup}                    ${coord}\n`+
-      `Training Supervisor              OJT Coordinator, CICS\n\n`;
+    await gBatch(docId, [{ insertText: { location: { index: endIdx4 }, text: footer } }]);
 
-    const batch3Res = await fetch(`https://docs.googleapis.com/v1/documents/${docId}:batchUpdate`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ requests: [{ insertText: { location: { index: newEnd }, text: footer } }] })
-    });
-    const batch3 = await batch3Res.json();
-    if (batch3.error) throw new Error(batch3.error.message);
-
-    setStatus(`<span style="color:var(--green)">✓ Week ${weekNum} written with proper table!</span> <a href="https://docs.google.com/document/d/${docId}/edit" target="_blank" style="color:var(--blue);text-decoration:none;">Open doc →</a>`);
-    showToast(`Week ${weekNum} table written to Google Docs ✓`,'success');
+    setStatus(`<span style="color:var(--green)">✓ Week ${weekNum} written to your Google Doc!</span> <a href="https://docs.google.com/document/d/${docId}/edit" target="_blank" style="color:var(--blue);text-decoration:none;">Open doc →</a>`);
+    toast(`Week ${weekNum} written successfully ✓`,'success');
 
   } catch(e) {
     setStatus(`<span style="color:var(--red)">⚠️ ${e.message}</span>`);
-    showToast('Failed: '+e.message,'error');
+    toast('Error: '+e.message,'error');
   }
 
   btn.disabled = false;
   document.getElementById('sendIcon').textContent = '📄';
-  document.getElementById('sendText').textContent = 'Send to Google Docs';
+  document.getElementById('sendTxt').textContent = 'Send to Google Docs';
 }
 
-function setStatus(html) { document.getElementById('sendStatus').innerHTML = html; }
-function showToast(msg,type='') {
+// ── Helpers ──
+async function gFetch(url) {
+  const res = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data;
+}
+async function gBatch(docId, requests) {
+  const res = await fetch(`https://docs.googleapis.com/v1/documents/${docId}:batchUpdate`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requests })
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  return data;
+}
+function setStatus(html) { document.getElementById('status').innerHTML = html; }
+function toast(msg, type='') {
   const t = document.getElementById('toast');
   t.textContent = msg; t.className = 'toast show '+type;
-  setTimeout(()=>t.className='toast',3500);
+  setTimeout(()=>t.className='toast', 3500);
 }
 </script>
 </body>
