@@ -86,7 +86,7 @@
 <div class="container">
   <div class="tip">
     <span>💡</span>
-    <span>Tell Claude your raw notes → Claude polishes each day → paste here → <b>Send to Google Docs</b> creates a new <b>Week sub-tab</b> with your exact format.</span>
+    <span>Tell Claude your raw notes → Claude polishes each day → paste here → <b>Send to Google Docs</b> creates a new Google Doc with your exact RLE format.</span>
   </div>
 
   <!-- Step 1 -->
@@ -349,8 +349,9 @@ async function send() {
 
     if (!result.success) throw new Error(result.error || 'Apps Script returned an error');
 
-    setStatus(`<span style="color:var(--green)">✓ Week ${weekNum} sub-tab created!</span> <a href="https://docs.google.com/document/d/${docId}/edit" target="_blank" style="color:var(--blue);text-decoration:none;">Open doc →</a>`);
-    toast(`Week ${weekNum} sub-tab created ✓`, 'success');
+    const docUrl = result.docUrl || `https://docs.google.com/document/d/${docId}/edit`;
+    setStatus(`<span style="color:var(--green)">✓ Week ${weekNum} doc created!</span> <a href="${docUrl}" target="_blank" style="color:var(--blue);text-decoration:none;">Open new doc →</a>`);
+    toast(`Week ${weekNum} doc created ✓`, 'success');
 
   } catch(e) {
     setStatus(`<span style="color:var(--red)">⚠️ ${e.message}</span>`);
