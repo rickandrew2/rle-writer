@@ -75,7 +75,7 @@
     <div class="brand-mark">R</div>
     <div class="brand-text">
       <h1>RLE Doc Writer</h1>
-      <p>Times New Roman · Bold · Underline · Creates Week sub-tab</p>
+      <p>Times New Roman · Bold · Underline · Creates real Week sub-tab via Apps Script</p>
     </div>
   </div>
   <div id="authArea">
@@ -96,6 +96,11 @@
       <div><div class="card-title">Document Settings</div><div class="card-desc">Saved in your browser automatically</div></div>
     </div>
     <div class="card-body">
+      <div style="margin-bottom:12px;">
+        <label>Apps Script Web App URL</label>
+        <input type="text" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbxcUAa1KbLm9bpc2iKcSGKIsznMjMcepmrR5QJv8E79BNTQHRAfim2t08q3rOccqiNRAQ/exec"/>
+        <div style="font-size:11px;color:var(--text3);margin-top:4px;">From Extensions → Apps Script → Deploy → Web App URL</div>
+      </div>
       <div class="g2" style="margin-bottom:12px;">
         <div><label>Google Doc ID</label><input type="text" id="docId" value="17j0_Qc0U5BjT_mv8NpiNxRs1IP9DoofSNoxAftttXI8"/></div>
         <div><label>Student Name</label><input type="text" id="studentName" value="RICK ANDREW M. MACAPAGAL"/></div>
@@ -164,7 +169,7 @@ const CLIENT_ID = '564861021362-qgt93dk2dpk6r90165unitk9qkgtml5f.apps.googleuser
 const SCOPES = 'https://www.googleapis.com/auth/documents';
 let accessToken = null, tokenClient = null, dayCount = 0;
 
-const SAVE_IDS = ['docId','studentName','program','supervisor','coordinator','weekNum'];
+const SAVE_IDS = ['docId','studentName','program','supervisor','coordinator','weekNum','scriptUrl'];
 const DEFAULT_DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -292,6 +297,10 @@ function addReqs(arr, req) { if (req) arr.push(req); }
 // ── Main send ──
 async function send() {
   if (!accessToken) { toast('Please sign in first!','error'); return; }
+
+  const scriptUrl = document.getElementById('scriptUrl').value.trim();
+  if (!scriptUrl) { toast('Please enter your Apps Script URL!','error'); return; }
+
   const days = getDays();
   if (!days.some(d => d.acc && d.acc.trim() && d.acc.trim() !== ' ')) {
     toast('Please enter at least one day!','error'); return;
@@ -304,249 +313,48 @@ async function send() {
   const sup     = document.getElementById('supervisor').value.trim().toUpperCase();
   const coord   = document.getElementById('coordinator').value.trim().toUpperCase();
   const ref     = document.getElementById('reflection').value.trim();
-  const total   = days.reduce((s,d)=>s+d.hrs,0);
 
   const btn = document.getElementById('sendBtn');
   btn.disabled = true;
   document.getElementById('sendIcon').innerHTML = '<span class="spin"></span>';
   document.getElementById('sendTxt').textContent = 'Writing to doc…';
+  setStatus('Calling Apps Script…');
 
   try {
-    // ── STEP 1: Create a new tab named "Week N" ──
-    setStatus('Creating Week sub-tab…');
-    const tabTitle = `Week ${weekNum}`;
-    const createTabRes = await fetch(`https://docs.googleapis.com/v1/documents/${docId}:batchUpdate`, {
+    const payload = {
+      docId, weekNum,
+      studentName: name,
+      program: prog,
+      supervisor: sup,
+      coordinator: coord,
+      reflection: ref,
+      days: days.map(d => ({
+        date: d.date,
+        day:  d.day,
+        acc:  d.acc || ' ',
+        hrs:  d.hrs,
+        hol:  d.hol
+      }))
+    };
+
+    const res = await fetch(scriptUrl, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        requests: [{
-          createDocumentTab: { tabProperties: { title: tabTitle } }
-        }]
-      })
-    });
-    const createTabData = await createTabRes.json();
-    if (createTabData.error) throw new Error(createTabData.error.message);
-
-    // Get the new tab's ID from the response
-    const newTabId = createTabData.replies?.[0]?.createDocumentTab?.tabProperties?.tabId;
-    if (!newTabId) throw new Error('Could not get new tab ID. The Docs API may not support tab creation in this doc version.');
-
-    // ── STEP 2: Insert header text into the new tab ──
-    setStatus('Writing header…');
-
-    // Build header text with labels and values on same line
-    const headerText =
-      `Name of Student Trainee\t:\t${name}\n`+
-      `Program\t\t\t:\t${prog}\n`+
-      `Name Of Company\t\t:\tTECH EXECUTIVE LABS I.T. SOLUTIONS\n`+
-      `Department\t\t:\tIT DEPARTMENT\n`+
-      `Company Address\t\t:\tBON GIORNO HOMES, BRGY. MUNTINGPULO, LIPA CITY\n\n`+
-      `RELATED LEARNING EXPERIENCE\n`+
-      `Week ${weekNum}\n\n`;
-
-    // Insert into the new tab (index 1 = start of tab)
-    await gBatch(docId, [{
-      insertText: { location: { index: 1, tabId: newTabId }, text: headerText }
-    }]);
-
-    // ── STEP 3: Style the header ──
-    setStatus('Styling header…');
-    const r2 = await gFetchTab(docId, newTabId);
-    const hdrReqs = [];
-
-    for (const el of r2.body.content) {
-      if (!el.paragraph) continue;
-      const pStart = el.startIndex;
-      const pEnd   = el.endIndex - 1;
-      if (pEnd <= pStart) continue;
-      const rawText = el.paragraph.elements?.map(e=>e.textRun?.content||'').join('').replace(/\n/g,'').trim();
-
-      // All text: TNR, not italic
-      addReqs(hdrReqs, styleReq(pStart, pEnd, false, false, false));
-
-      // Bold the VALUES (after the colon tab)
-      // Lines with ":" — bold the value part
-      if (rawText.includes(':\t')) {
-        // Find the colon+tab position within the paragraph elements
-        let charOffset = pStart;
-        let colonFound = false;
-        for (const elem of el.paragraph.elements) {
-          const txt = elem.textRun?.content || '';
-          if (!colonFound && txt.includes(':\t')) {
-            const colonPos = charOffset + txt.indexOf(':\t') + 2; // after ":\t"
-            addReqs(hdrReqs, styleReq(colonPos, pEnd, true, false, false));
-            colonFound = true;
-          }
-          charOffset += txt.length;
-        }
-      }
-
-      // RELATED LEARNING EXPERIENCE — bold + center
-      if (rawText === 'RELATED LEARNING EXPERIENCE') {
-        addReqs(hdrReqs, styleReq(pStart, pEnd, true, false, false));
-        addReqs(hdrReqs, alignReq(pStart, pEnd+1, 'CENTER'));
-      }
-
-      // Week N — bold + center
-      if (rawText === `Week ${weekNum}`) {
-        addReqs(hdrReqs, styleReq(pStart, pEnd, true, false, false));
-        addReqs(hdrReqs, alignReq(pStart, pEnd+1, 'CENTER'));
-      }
-    }
-
-    if (hdrReqs.length) await gBatch(docId, hdrReqs.map(r => ({ ...r, tabId: undefined })), newTabId);
-
-    // ── STEP 4: Insert table ──
-    setStatus('Creating table…');
-    const r3 = await gFetchTab(docId, newTabId);
-    const tableAt = r3.body.content.at(-1).endIndex - 1;
-
-    // Table has: 1 header row + N day rows + 1 total row
-    // But total row only spans 2 columns (merged col 0+1, col 2)
-    // We insert a 3-col table then merge later
-    await gBatch(docId, [{
-      insertTable: {
-        rows: days.length + 2,
-        columns: 3,
-        location: { index: tableAt, tabId: newTabId }
-      }
-    }], newTabId);
-
-    // ── STEP 5: Fill cells ──
-    setStatus('Filling table cells…');
-    const r4 = await gFetchTab(docId, newTabId);
-    const tables4 = r4.body.content.filter(el => el.table);
-    const tbl4 = tables4[tables4.length-1].table;
-
-    function cIdx(row, col) {
-      return tbl4.tableRows[row].tableCells[col].content[0].startIndex;
-    }
-
-    const cellInserts = [];
-
-    // Header row — CAPS, will bold later
-    cellInserts.push({ insertText: { location: { index: cIdx(0,0), tabId: newTabId }, text: 'DATE\nDAY' }});
-    cellInserts.push({ insertText: { location: { index: cIdx(0,1), tabId: newTabId }, text: 'ACCOMPLISHMENTS' }});
-    cellInserts.push({ insertText: { location: { index: cIdx(0,2), tabId: newTabId }, text: 'NO. OF HOURS\nRENDERED' }});
-
-    // Day rows
-    days.forEach((d, i) => {
-      const row = i + 1;
-      const dateDay = [d.date, d.day].filter(Boolean).join('\n') || ' ';
-      cellInserts.push({ insertText: { location: { index: cIdx(row,0), tabId: newTabId }, text: dateDay }});
-      cellInserts.push({ insertText: { location: { index: cIdx(row,1), tabId: newTabId }, text: d.acc||' ' }});
-      cellInserts.push({ insertText: { location: { index: cIdx(row,2), tabId: newTabId }, text: String(d.hrs) }});
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
     });
 
-    // Total row — col 0 gets "TOTAL", col 1 gets space, col 2 gets hours
-    // We'll merge col 0+1 after filling
-    const totalRow = days.length + 1;
-    cellInserts.push({ insertText: { location: { index: cIdx(totalRow,0), tabId: newTabId }, text: 'TOTAL' }});
-    cellInserts.push({ insertText: { location: { index: cIdx(totalRow,1), tabId: newTabId }, text: ' ' }});
-    cellInserts.push({ insertText: { location: { index: cIdx(totalRow,2), tabId: newTabId }, text: `${total} hours` }});
+    const text = await res.text();
+    let result;
+    try { result = JSON.parse(text); } catch(e) { throw new Error('Invalid response from Apps Script: ' + text.substring(0,200)); }
 
-    // Sort descending by index
-    cellInserts.sort((a,b) => b.insertText.location.index - a.insertText.location.index);
-    await gBatch(docId, cellInserts, newTabId);
-
-    // ── STEP 6: Merge total row col 0+1 ──
-    setStatus('Merging total row cells…');
-    const r5 = await gFetchTab(docId, newTabId);
-    const tables5 = r5.body.content.filter(el => el.table);
-    const tbl5 = tables5[tables5.length-1];
-
-    await gBatch(docId, [{
-      mergeTableCells: {
-        tableRange: {
-          tableCellLocation: {
-            tableStartLocation: { index: tbl5.startIndex, tabId: newTabId },
-            rowIndex: totalRow,
-            columnIndex: 0
-          },
-          rowSpan: 1,
-          columnSpan: 2
-        }
-      }
-    }], newTabId);
-
-    // ── STEP 7: Style all table cells ──
-    setStatus('Styling table…');
-    const r6 = await gFetchTab(docId, newTabId);
-    const tables6 = r6.body.content.filter(el => el.table);
-    const tbl6 = tables6[tables6.length-1].table;
-    const tableStyleReqs = [];
-
-    tbl6.tableRows.forEach((row, rowIdx) => {
-      const isHeaderRow = rowIdx === 0;
-      const isTotalRow  = rowIdx === tbl6.tableRows.length - 1;
-      row.tableCells.forEach((cell, colIdx) => {
-        const isHoursCol = colIdx === (isHeaderRow ? 2 : (isTotalRow ? 1 : 2));
-        cell.content.forEach(para => {
-          if (!para.paragraph) return;
-          const pS = para.startIndex;
-          const pE = para.endIndex - 1;
-          if (pE <= pS) return;
-          const bold = isHeaderRow || isTotalRow;
-          addReqs(tableStyleReqs, styleReq(pS, pE, bold, false, false));
-          if (isHeaderRow || isHoursCol || isTotalRow) {
-            addReqs(tableStyleReqs, alignReq(pS, pE+1, 'CENTER'));
-          }
-        });
-      });
-    });
-
-    if (tableStyleReqs.length) await gBatch(docId, tableStyleReqs, newTabId);
-
-    // ── STEP 8: Footer — Prepared by + Noted ──
-    setStatus('Adding signatures…');
-    const r7 = await gFetchTab(docId, newTabId);
-    const footerAt = r7.body.content.at(-1).endIndex - 1;
-
-    const footerText =
-      `\nPrepared by:\n\n`+
-      `${name}\n`+
-      `Student Trainee\n\n`+
-      `Noted:\n\n`+
-      `${sup}\t\t\t\t${coord}\n`+
-      `Training Supervisor\t\t\t\tOJT Coordinator, CICS\n`+
-      (ref ? `\nWeekly Reflection\n${ref}\n` : '');
-
-    await gBatch(docId, [{ insertText: { location: { index: footerAt, tabId: newTabId }, text: footerText } }], newTabId);
-
-    // Style footer
-    setStatus('Styling signatures…');
-    const r8 = await gFetchTab(docId, newTabId);
-    const footerStyleReqs = [];
-
-    for (const el of r8.body.content) {
-      if (!el.paragraph) continue;
-      const pS = el.startIndex;
-      const pE = el.endIndex - 1;
-      if (pS < footerAt || pE <= pS) continue;
-      const rawText = el.paragraph.elements?.map(e=>e.textRun?.content||'').join('').replace(/\n/g,'').trim();
-
-      // All footer: TNR, not italic
-      addReqs(footerStyleReqs, styleReq(pS, pE, false, false, false));
-
-      // Name — bold + underline
-      if (rawText === name) {
-        addReqs(footerStyleReqs, styleReq(pS, pE, true, false, true));
-      }
-      // Supervisor line — bold + underline each name
-      if (rawText.includes(sup) && rawText.includes(coord)) {
-        // Bold + underline the whole line (both names on same line)
-        addReqs(footerStyleReqs, styleReq(pS, pE, true, false, true));
-      }
-    }
-
-    if (footerStyleReqs.length) await gBatch(docId, footerStyleReqs, newTabId);
+    if (!result.success) throw new Error(result.error || 'Apps Script returned an error');
 
     setStatus(`<span style="color:var(--green)">✓ Week ${weekNum} sub-tab created!</span> <a href="https://docs.google.com/document/d/${docId}/edit" target="_blank" style="color:var(--blue);text-decoration:none;">Open doc →</a>`);
     toast(`Week ${weekNum} sub-tab created ✓`, 'success');
 
   } catch(e) {
     setStatus(`<span style="color:var(--red)">⚠️ ${e.message}</span>`);
-    toast('Error: '+e.message,'error');
+    toast('Error: ' + e.message, 'error');
     console.error(e);
   }
 
@@ -556,66 +364,6 @@ async function send() {
 }
 
 // ── API helpers ──
-async function gFetch(url) {
-  const res = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
-  return data;
-}
-
-async function gFetchTab(docId, tabId) {
-  const res = await fetch(
-    `https://docs.googleapis.com/v1/documents/${docId}?includeTabsContent=true`,
-    { headers: { Authorization: `Bearer ${accessToken}` } }
-  );
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
-  // Find the specific tab
-  const tab = findTab(data.tabs, tabId);
-  if (!tab) throw new Error('Tab not found: '+tabId);
-  return tab.documentTab.body ? tab.documentTab : { body: tab.documentTab.body || data };
-}
-
-function findTab(tabs, tabId) {
-  for (const tab of (tabs||[])) {
-    if (tab.tabProperties?.tabId === tabId) return tab;
-    if (tab.childTabs) {
-      const found = findTab(tab.childTabs, tabId);
-      if (found) return found;
-    }
-  }
-  return null;
-}
-
-async function gBatch(docId, requests, tabId=null) {
-  // Add tabId to location of each request if provided
-  const reqs = tabId ? requests.map(r => addTabId(r, tabId)) : requests;
-  const res = await fetch(`https://docs.googleapis.com/v1/documents/${docId}:batchUpdate`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ requests: reqs, writeControl: {} })
-  });
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
-  return data;
-}
-
-function addTabId(req, tabId) {
-  // Deep clone and inject tabId into all location objects
-  const r = JSON.parse(JSON.stringify(req));
-  function inject(obj) {
-    if (obj && typeof obj === 'object') {
-      if ('index' in obj && !('tabId' in obj)) obj.tabId = tabId;
-      if ('startIndex' in obj && !('tabId' in obj)) obj.tabId = tabId;
-      for (const k of Object.keys(obj)) inject(obj[k]);
-    }
-  }
-  inject(r);
-  return r;
-}
-
-
-// ── Auto-fill dates from range ──
 function autoFillDates() {
   const raw = document.getElementById('dateRange').value.trim();
   const hint = document.getElementById('dateRangeHint');
