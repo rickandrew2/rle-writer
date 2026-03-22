@@ -129,6 +129,14 @@
           <textarea id="reflection" style="min-height:38px;" placeholder="Optional summary paragraph..."></textarea>
         </div>
       </div>
+      <div style="margin-bottom:18px;">
+        <label>Date Range — auto-fills dates for each day</label>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input type="text" id="dateRange" placeholder="e.g. March 09-13, 2026  or  March 09 - April 02, 2026" style="flex:1;"/>
+          <button onclick="autoFillDates()" style="padding:10px 18px;border-radius:var(--r);border:none;background:var(--green);color:#000;font-family:'Syne',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s;" onmouseover="this.style.background='#00ffb3'" onmouseout="this.style.background='var(--green)'">Auto-fill Dates</button>
+        </div>
+        <div id="dateRangeHint" style="font-size:11px;color:var(--text3);margin-top:5px;min-height:16px;"></div>
+      </div>
       <label style="margin-bottom:10px;">Daily Entries</label>
       <div class="days-wrap" id="daysWrap"></div>
       <button class="add-btn" onclick="addDay()">＋ Add another day</button>
@@ -312,7 +320,7 @@ async function send() {
       headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         requests: [{
-          createTab: { tabProperties: { title: tabTitle } }
+          createDocumentTab: { tabProperties: { title: tabTitle } }
         }]
       })
     });
@@ -320,7 +328,7 @@ async function send() {
     if (createTabData.error) throw new Error(createTabData.error.message);
 
     // Get the new tab's ID from the response
-    const newTabId = createTabData.replies?.[0]?.createTab?.tabProperties?.tabId;
+    const newTabId = createTabData.replies?.[0]?.createDocumentTab?.tabProperties?.tabId;
     if (!newTabId) throw new Error('Could not get new tab ID. The Docs API may not support tab creation in this doc version.');
 
     // ── STEP 2: Insert header text into the new tab ──
@@ -604,6 +612,115 @@ function addTabId(req, tabId) {
   }
   inject(r);
   return r;
+}
+
+
+// ── Auto-fill dates from range ──
+function autoFillDates() {
+  const raw = document.getElementById('dateRange').value.trim();
+  const hint = document.getElementById('dateRangeHint');
+  if (!raw) { hint.textContent = 'Please enter a date range first.'; hint.style.color = 'var(--red)'; return; }
+
+  // Parse date range — supports:
+  // "March 09-13, 2026"
+  // "March 09 - March 13, 2026"
+  // "March 09 - April 02, 2026"
+  const MONTHS = {
+    january:0,february:1,march:2,april:3,may:4,june:5,
+    july:6,august:7,september:8,october:9,november:10,december:11
+  };
+
+  function parseDate(str) {
+    str = str.trim();
+    // e.g. "March 09" or "March 9" with optional year
+    const m = str.match(/([A-Za-z]+)\s+(\d{1,2})(?:,?\s*(\d{4}))?/);
+    if (!m) return null;
+    const monthIdx = MONTHS[m[1].toLowerCase()];
+    if (monthIdx === undefined) return null;
+    const day = parseInt(m[2]);
+    const year = m[3] ? parseInt(m[3]) : new Date().getFullYear();
+    return new Date(year, monthIdx, day);
+  }
+
+  let startDate = null, endDate = null, year = new Date().getFullYear();
+
+  // Extract year from the string first
+  const yearMatch = raw.match(/\b(20\d{2})\b/);
+  if (yearMatch) year = parseInt(yearMatch[1]);
+
+  // Try "Month DD - Month DD, YYYY"
+  const fullRange = raw.match(/([A-Za-z]+ \d{1,2})\s*[-–]\s*([A-Za-z]+ \d{1,2})/i);
+  if (fullRange) {
+    startDate = parseDate(fullRange[1] + ', ' + year);
+    endDate   = parseDate(fullRange[2] + ', ' + year);
+  }
+
+  // Try "Month DD-DD, YYYY" (same month)
+  if (!startDate) {
+    const sameMonth = raw.match(/([A-Za-z]+)\s+(\d{1,2})\s*[-–]\s*(\d{1,2})/i);
+    if (sameMonth) {
+      startDate = parseDate(sameMonth[1] + ' ' + sameMonth[2] + ', ' + year);
+      endDate   = parseDate(sameMonth[1] + ' ' + sameMonth[3] + ', ' + year);
+    }
+  }
+
+  if (!startDate || !endDate || isNaN(startDate) || isNaN(endDate)) {
+    hint.textContent = 'Could not parse dates. Try: "March 09-13, 2026" or "March 09 - April 02, 2026"';
+    hint.style.color = 'var(--red)';
+    return;
+  }
+
+  if (endDate < startDate) {
+    hint.textContent = 'End date is before start date. Please check.';
+    hint.style.color = 'var(--red)';
+    return;
+  }
+
+  // Generate all dates between start and end (skip nothing — include all days)
+  const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DAY_NAMES   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+  const dates = [];
+  const cur = new Date(startDate);
+  while (cur <= endDate) {
+    dates.push({
+      date: MONTH_NAMES[cur.getMonth()] + ' ' + String(cur.getDate()).padStart(2,'0') + ', ' + cur.getFullYear(),
+      day:  DAY_NAMES[cur.getDay()],
+      isWeekend: cur.getDay() === 0 || cur.getDay() === 6
+    });
+    cur.setDate(cur.getDate() + 1);
+  }
+
+  // Get existing day cards
+  const cards = Array.from(document.querySelectorAll('.day-card'));
+
+  // Fill each card's date in order
+  dates.forEach((d, i) => {
+    if (i < cards.length) {
+      const id = cards[i].id.replace('dc-','');
+      const dtEl = document.getElementById('dt-'+id);
+      const dnEl = document.getElementById('dn-'+id);
+      if (dtEl) dtEl.value = d.date;
+      if (dnEl) dnEl.value = d.day;
+      // Auto-mark weekends as holiday
+      const holEl = document.getElementById('hol-'+id);
+      if (holEl && d.isWeekend && !holEl.checked) {
+        holEl.checked = true;
+        toggleHol(id);
+      }
+    } else {
+      // Add new day card for extra dates
+      addDay({ date: d.date, label: d.day });
+      if (d.isWeekend) {
+        const newId = dayCount;
+        const holEl = document.getElementById('hol-'+newId);
+        if (holEl) { holEl.checked = true; toggleHol(newId); }
+      }
+    }
+  });
+
+  hint.textContent = `✓ Filled ${dates.length} day${dates.length>1?'s':''}: ${dates[0].date} (${dates[0].day}) → ${dates[dates.length-1].date} (${dates[dates.length-1].day})`;
+  hint.style.color = 'var(--green)';
 }
 
 function setStatus(html) { document.getElementById('status').innerHTML = html; }
