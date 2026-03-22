@@ -391,8 +391,8 @@ async function sendToGoogleDocs() {
     // Day rows
     days.forEach((d, i) => {
       const row = i + 1;
-      const dateDay = `${d.date}${d.day ? ' '+d.day : ''}`;
-      const accText = d.hol ? 'Holiday — no work rendered.' : (d.acc || '—');
+      const dateDay = `${d.date || d.day || 'N/A'}${d.date && d.day ? ' '+d.day : ''}`;
+      const accText = d.hol ? 'Holiday — no work rendered.' : (d.acc.trim() || 'No entry.');
       const hrsText = d.hol ? '0' : String(d.hrs || 8);
       cellRequests.push({ insertText: { location: { index: cellIndex(row,0) }, text: dateDay } });
       cellRequests.push({ insertText: { location: { index: cellIndex(row,1) }, text: accText } });
@@ -402,7 +402,7 @@ async function sendToGoogleDocs() {
     // Total row
     const totalRow = days.length + 1;
     cellRequests.push({ insertText: { location: { index: cellIndex(totalRow,0) }, text: 'TOTAL' } });
-    cellRequests.push({ insertText: { location: { index: cellIndex(totalRow,1) }, text: '' } });
+    cellRequests.push({ insertText: { location: { index: cellIndex(totalRow,1) }, text: ' ' } });
     cellRequests.push({ insertText: { location: { index: cellIndex(totalRow,2) }, text: String(totalHours)+' hours' } });
 
     // Sort by index descending to avoid offset issues
