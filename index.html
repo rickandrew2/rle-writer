@@ -7,337 +7,168 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&family=Epilogue:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
   :root {
-    --bg: #0e0e11;
-    --bg2: #16161a;
-    --bg3: #1e1e24;
-    --border: #2a2a35;
-    --border2: #3a3a48;
-    --text: #e8e8f0;
-    --text2: #9898b0;
-    --text3: #5a5a72;
-    --green: #00e5a0;
-    --green-dim: #00e5a018;
-    --green-mid: #00e5a040;
-    --red: #ff5566;
-    --amber: #ffb830;
-    --blue: #4a8fff;
-    --r: 10px;
+    --bg:#0e0e11;--bg2:#16161a;--bg3:#1e1e24;--border:#2a2a35;--border2:#3a3a48;
+    --text:#e8e8f0;--text2:#9898b0;--text3:#5a5a72;
+    --green:#00e5a0;--green-dim:#00e5a018;--green-mid:#00e5a040;
+    --red:#ff5566;--blue:#4a8fff;--r:10px;
   }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Epilogue',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+  header{position:relative;z-index:1;padding:18px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:var(--bg);}
+  .brand{display:flex;align-items:center;gap:14px;}
+  .brand-mark{width:34px;height:34px;background:var(--green);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:#000;}
+  .brand-text h1{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--text);}
+  .brand-text p{font-size:11px;color:var(--text3);margin-top:1px;}
+  #authArea{display:flex;align-items:center;gap:8px;}
+  .auth-pill{display:flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid var(--border2);border-radius:100px;background:var(--bg2);font-size:12px;color:var(--text2);cursor:pointer;transition:all .2s;font-family:'Epilogue',sans-serif;}
+  .auth-pill:hover{border-color:var(--green);color:var(--green);}
+  .auth-pill.connected{border-color:var(--green-mid);color:var(--green);background:var(--green-dim);cursor:default;}
+  .auth-pill .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+  .signout{background:none;border:none;color:var(--text3);font-size:11px;cursor:pointer;font-family:'Epilogue',sans-serif;}
+  .signout:hover{color:var(--red);}
+  .container{position:relative;z-index:1;flex:1;max-width:900px;width:100%;margin:0 auto;padding:40px 40px;display:flex;flex-direction:column;gap:24px;}
+  .how-it-works{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px 22px;display:flex;align-items:flex-start;gap:14px;}
+  .hiw-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+  .hiw-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px;}
+  .hiw-steps{display:flex;flex-direction:column;gap:3px;}
+  .hiw-step{font-size:12px;color:var(--text2);display:flex;gap:8px;}
+  .hiw-step span:first-child{color:var(--green);font-weight:600;flex-shrink:0;}
+  .step{background:var(--bg2);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+  .step-header{padding:18px 22px;display:flex;align-items:center;gap:14px;}
+  .step-num{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;background:var(--bg3);border:1px solid var(--border2);color:var(--text3);}
+  .step-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--text);}
+  .step-desc{font-size:11px;color:var(--text3);margin-top:2px;}
+  .step-body{padding:0 22px 22px;}
+  label{font-size:10px;font-weight:500;color:var(--text3);letter-spacing:.8px;text-transform:uppercase;display:block;margin-bottom:6px;}
+  input[type=text],input[type=number],select{width:100%;padding:10px 13px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:'Epilogue',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
+  input:focus,select:focus{border-color:var(--green-mid);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
 
-  body {
-    font-family: 'Epilogue', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+  /* Day entries */
+  .days-container{display:flex;flex-direction:column;gap:10px;}
+  .day-entry{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:14px;}
+  .day-entry-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .day-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--green);background:var(--green-dim);border:1px solid var(--green-mid);border-radius:5px;padding:2px 10px;}
+  .day-entry textarea{width:100%;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Epilogue',sans-serif;font-size:12px;line-height:1.6;outline:none;resize:vertical;min-height:64px;transition:border-color .2s;}
+  .day-entry textarea:focus{border-color:var(--green-mid);}
+  .day-entry textarea::placeholder{color:var(--text3);}
+  .day-meta{display:flex;align-items:center;gap:10px;margin-top:8px;}
+  .day-meta input[type=text]{flex:1;}
+  .day-meta input[type=number]{width:70px;}
+  .day-meta label{margin:0;white-space:nowrap;}
+  .holiday-check{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2);cursor:pointer;}
+  .holiday-check input{width:14px;height:14px;cursor:pointer;}
+  .del-day{background:none;border:none;color:var(--text3);cursor:pointer;font-size:14px;margin-left:auto;padding:2px 6px;border-radius:5px;}
+  .del-day:hover{color:var(--red);}
+  .add-day-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:9px;border:1px dashed var(--border2);border-radius:var(--r);background:transparent;color:var(--text3);font-family:'Epilogue',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;width:100%;}
+  .add-day-btn:hover{border-color:var(--green);color:var(--green);}
 
-  /* noise texture overlay */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 0; opacity: 0.5;
-  }
-
-  /* ── Header ── */
-  header {
-    position: relative; z-index: 1;
-    padding: 20px 40px;
-    display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
-  }
-  .brand { display: flex; align-items: center; gap: 14px; }
-  .brand-mark {
-    width: 36px; height: 36px;
-    background: var(--green);
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700;
-    color: #000;
-  }
-  .brand-text h1 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
-  .brand-text p { font-size: 11px; color: var(--text3); margin-top: 1px; }
-
-  /* Auth pill */
-  #authArea { display: flex; align-items: center; }
-  .auth-pill {
-    display: flex; align-items: center; gap: 8px;
-    padding: 8px 16px;
-    border: 1px solid var(--border2);
-    border-radius: 100px;
-    background: var(--bg2);
-    font-size: 12px; color: var(--text2);
-    cursor: pointer;
-    transition: all .2s;
-    font-family: 'Epilogue', sans-serif;
-  }
-  .auth-pill:hover { border-color: var(--green); color: var(--green); }
-  .auth-pill.connected { border-color: var(--green-mid); color: var(--green); background: var(--green-dim); cursor: default; }
-  .auth-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-  .signout { background: none; border: none; color: var(--text3); font-size: 11px; cursor: pointer; margin-left: 8px; font-family: 'Epilogue', sans-serif; }
-  .signout:hover { color: var(--red); }
-
-  /* ── Main layout ── */
-  .container {
-    position: relative; z-index: 1;
-    flex: 1;
-    max-width: 860px; width: 100%;
-    margin: 0 auto;
-    padding: 48px 40px;
-    display: flex; flex-direction: column; gap: 28px;
-  }
-
-  /* ── Step cards ── */
-  .step {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    overflow: hidden;
-    transition: border-color .2s;
-  }
-  .step.active { border-color: var(--border2); }
-  .step.done { border-color: var(--green-mid); }
-
-  .step-header {
-    padding: 20px 24px;
-    display: flex; align-items: center; gap: 16px;
-  }
-  .step-num {
-    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700;
-    background: var(--bg3); border: 1px solid var(--border2); color: var(--text3);
-    transition: all .3s;
-  }
-  .step.done .step-num { background: var(--green-dim); border-color: var(--green); color: var(--green); }
-  .step-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 600; color: var(--text); }
-  .step-desc { font-size: 12px; color: var(--text3); margin-top: 2px; }
-
-  .step-body { padding: 0 24px 24px; }
-
-  /* ── Form elements ── */
-  label { font-size: 11px; font-weight: 500; color: var(--text3); letter-spacing: .8px; text-transform: uppercase; display: block; margin-bottom: 7px; }
-
-  input[type=text], textarea, select {
-    width: 100%; padding: 11px 14px;
-    background: var(--bg3); border: 1px solid var(--border);
-    border-radius: var(--r); color: var(--text);
-    font-family: 'Epilogue', sans-serif; font-size: 13px; line-height: 1.6;
-    outline: none; transition: border-color .2s;
-  }
-  input:focus, textarea:focus { border-color: var(--green-mid); }
-  textarea { resize: vertical; min-height: 260px; }
-  input::placeholder, textarea::placeholder { color: var(--text3); }
-
-  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-
-  /* Week selector row */
-  .week-row { display: flex; align-items: center; gap: 10px; }
-  .week-row input { flex: 1; }
-  .week-btn {
-    width: 36px; height: 36px; border-radius: 8px;
-    background: var(--bg3); border: 1px solid var(--border);
-    color: var(--text2); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    transition: all .15s; flex-shrink: 0;
-  }
-  .week-btn:hover { border-color: var(--border2); color: var(--text); }
-
-  /* Report preview */
-  .preview-box {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: var(--r);
-    padding: 16px;
-    font-size: 12px; line-height: 1.8; color: var(--text2);
-    white-space: pre-wrap; font-family: 'Epilogue', sans-serif;
-    max-height: 320px; overflow-y: auto;
-  }
-  .preview-box.empty { color: var(--text3); font-style: italic; text-align: center; padding: 40px; }
-
-  /* ── Buttons ── */
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-    padding: 12px 24px; border-radius: var(--r); border: none;
-    font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: all .2s; letter-spacing: 0.2px;
-  }
-  .btn-primary {
-    background: var(--green); color: #000;
-    width: 100%;
-  }
-  .btn-primary:hover:not(:disabled) { background: #00ffb3; transform: translateY(-1px); box-shadow: 0 4px 24px #00e5a030; }
-  .btn-primary:disabled { background: var(--bg3); color: var(--text3); cursor: not-allowed; border: 1px solid var(--border); transform: none; box-shadow: none; }
-
-  .btn-ghost {
-    background: transparent; color: var(--text2);
-    border: 1px solid var(--border);
-    font-size: 12px; padding: 8px 14px;
-  }
-  .btn-ghost:hover { border-color: var(--border2); color: var(--text); }
-
-  /* ── How it works banner ── */
-  .how-it-works {
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px 24px;
-    display: flex; align-items: flex-start; gap: 16px;
-  }
-  .hiw-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
-  .hiw-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-  .hiw-steps { display: flex; flex-direction: column; gap: 4px; }
-  .hiw-step { font-size: 12px; color: var(--text2); display: flex; gap: 8px; }
-  .hiw-step span:first-child { color: var(--green); font-weight: 600; flex-shrink: 0; }
-
-  /* ── Toast ── */
-  .toast {
-    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(16px);
-    background: var(--bg2); border: 1px solid var(--border2);
-    color: var(--text); padding: 12px 22px; border-radius: 100px;
-    font-size: 13px; opacity: 0; transition: all .3s;
-    pointer-events: none; z-index: 999; white-space: nowrap;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  .toast.success { border-color: var(--green-mid); color: var(--green); }
-  .toast.error { border-color: #ff556640; color: var(--red); }
-
-  /* spinner */
-  .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin .7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* scrollbar */
-  ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:var(--r);border:none;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+  .btn-primary{background:var(--green);color:#000;width:100%;}
+  .btn-primary:hover:not(:disabled){background:#00ffb3;transform:translateY(-1px);box-shadow:0 4px 24px #00e5a030;}
+  .btn-primary:disabled{background:var(--bg3);color:var(--text3);cursor:not-allowed;border:1px solid var(--border);}
+  .week-row{display:flex;align-items:center;gap:8px;}
+  .week-btn{width:34px;height:34px;border-radius:8px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+  .week-btn:hover{border-color:var(--border2);color:var(--text);}
+  .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--bg2);border:1px solid var(--border2);color:var(--text);padding:11px 22px;border-radius:100px;font-size:13px;opacity:0;transition:all .3s;pointer-events:none;z-index:999;white-space:nowrap;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .toast.success{border-color:var(--green-mid);color:var(--green);}
+  .toast.error{border-color:#ff556640;color:var(--red);}
+  .spin{display:inline-block;width:13px;height:13px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spin .7s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px;}
 </style>
 </head>
 <body>
-
 <header>
   <div class="brand">
     <div class="brand-mark">R</div>
     <div class="brand-text">
       <h1>RLE Doc Writer</h1>
-      <p>Paste from Claude · Send to Google Docs</p>
+      <p>Fill in your week · Writes a proper table to Google Docs</p>
     </div>
   </div>
   <div id="authArea">
-    <button class="auth-pill" id="signinBtn" onclick="signIn()">
-      <span class="dot"></span> Sign in with Google
-    </button>
+    <button class="auth-pill" onclick="signIn()"><span class="dot"></span> Sign in with Google</button>
   </div>
 </header>
 
 <div class="container">
 
-  <!-- How it works -->
   <div class="how-it-works">
     <div class="hiw-icon">💡</div>
     <div>
-      <div class="hiw-title">How this works every week</div>
+      <div class="hiw-title">Weekly workflow</div>
       <div class="hiw-steps">
-        <div class="hiw-step"><span>1.</span><span>Go to your Claude.ai chat and tell Claude your daily accomplishments</span></div>
-        <div class="hiw-step"><span>2.</span><span>Claude generates your polished RLE report and gives you the formatted text</span></div>
-        <div class="hiw-step"><span>3.</span><span>Come here, paste the report, fill in the week number, click Send — done!</span></div>
+        <div class="hiw-step"><span>1.</span><span>Tell Claude your raw daily notes in chat → Claude gives you polished accomplishments</span></div>
+        <div class="hiw-step"><span>2.</span><span>Paste each day's polished text into the fields below</span></div>
+        <div class="hiw-step"><span>3.</span><span>Click Send — a properly formatted table gets written directly to your Google Doc sub-tab</span></div>
       </div>
     </div>
   </div>
 
-  <!-- Step 1: Doc settings -->
-  <div class="step active" id="step1">
+  <!-- Step 1: Settings -->
+  <div class="step">
     <div class="step-header">
       <div class="step-num">1</div>
-      <div>
-        <div class="step-title">Document Settings</div>
-        <div class="step-desc">Your RLE Google Doc details — saved automatically</div>
-      </div>
+      <div><div class="step-title">Document Settings</div><div class="step-desc">Saved automatically in your browser</div></div>
     </div>
     <div class="step-body">
-      <div class="row2">
-        <div>
-          <label>Google Doc ID</label>
-          <input type="text" id="docId" value="17j0_Qc0U5BjT_mv8NpiNxRs1IP9DoofSNoxAftttXI8" placeholder="From your Google Doc URL"/>
-        </div>
-        <div>
-          <label>Student Name</label>
-          <input type="text" id="studentName" value="RICK ANDREW M. MACAPAGAL"/>
-        </div>
+      <div class="row2" style="margin-bottom:12px;">
+        <div><label>Google Doc ID</label><input type="text" id="docId" value="17j0_Qc0U5BjT_mv8NpiNxRs1IP9DoofSNoxAftttXI8"/></div>
+        <div><label>Student Name</label><input type="text" id="studentName" value="RICK ANDREW M. MACAPAGAL"/></div>
       </div>
-      <div style="margin-top:14px;" class="row2">
-        <div>
-          <label>Training Supervisor</label>
-          <input type="text" id="supervisor" value="Mr. JAZZON H. PEREZ"/>
-        </div>
-        <div>
-          <label>OJT Coordinator</label>
-          <input type="text" id="coordinator" value="Mr. DIONECES O. ALIMOREN"/>
-        </div>
+      <div class="row2">
+        <div><label>Training Supervisor</label><input type="text" id="supervisor" value="Mr. JAZZON H. PEREZ"/></div>
+        <div><label>OJT Coordinator</label><input type="text" id="coordinator" value="Mr. DIONECES O. ALIMOREN"/></div>
       </div>
     </div>
   </div>
 
-  <!-- Step 2: Paste report -->
-  <div class="step active" id="step2">
+  <!-- Step 2: Week entries -->
+  <div class="step">
     <div class="step-header">
       <div class="step-num">2</div>
-      <div>
-        <div class="step-title">Paste Your Report from Claude</div>
-        <div class="step-desc">Copy the formatted report Claude gave you and paste it below</div>
-      </div>
+      <div><div class="step-title">Enter Your Week</div><div class="step-desc">Paste Claude's polished accomplishments per day</div></div>
     </div>
     <div class="step-body">
-      <div style="margin-bottom:14px;" class="row2">
+      <div class="row2" style="margin-bottom:16px;">
         <div>
           <label>Week Number</label>
           <div class="week-row">
             <button class="week-btn" onclick="changeWeek(-1)">−</button>
-            <input type="number" id="weekNum" value="5" min="1" max="52" style="text-align:center;font-family:'Syne',sans-serif;font-weight:600;font-size:16px;"/>
+            <input type="number" id="weekNum" value="5" min="1" max="52" style="text-align:center;font-family:'Syne',sans-serif;font-weight:700;font-size:16px;"/>
             <button class="week-btn" onclick="changeWeek(1)">+</button>
           </div>
         </div>
         <div>
-          <label>Mode</label>
-          <select id="writeMode" style="height:38px;margin-top:0;">
-            <option value="replace">Replace existing week</option>
-            <option value="append">Append to end of doc</option>
-          </select>
+          <label>Date Range</label>
+          <input type="text" id="dateRange" placeholder="e.g. March 09–13, 2026"/>
         </div>
       </div>
-      <label>Report Text (from Claude)</label>
-      <textarea id="reportText" placeholder="Paste the report Claude generated for you here...&#10;&#10;Example:&#10;| March 09, 2026 Monday | The intern continued website performance... | 8 |&#10;| March 10, 2026 Tuesday | The intern implemented QR Ph payment... | 8 |&#10;...&#10;&#10;Weekly Reflection&#10;During Week 5, the intern..."></textarea>
-      <div style="display:flex;justify-content:flex-end;margin-top:8px;">
-        <button class="btn btn-ghost" onclick="clearReport()">Clear</button>
-      </div>
+
+      <label style="margin-bottom:10px;">Daily Accomplishments</label>
+      <div class="days-container" id="daysContainer"></div>
+      <button class="add-day-btn" onclick="addDay()" style="margin-top:10px;">＋ Add another day</button>
     </div>
   </div>
 
-  <!-- Step 3: Preview & Send -->
-  <div class="step active" id="step3">
+  <!-- Step 3: Send -->
+  <div class="step">
     <div class="step-header">
       <div class="step-num">3</div>
-      <div>
-        <div class="step-title">Preview & Send to Google Docs</div>
-        <div class="step-desc">Review what will be written, then send directly to your RLE document</div>
-      </div>
+      <div><div class="step-title">Send to Google Docs</div><div class="step-desc">Creates a properly formatted table in a new Week sub-tab</div></div>
     </div>
     <div class="step-body">
-      <label style="margin-bottom:10px;">Preview</label>
-      <div class="preview-box" id="preview">Paste your report above to see a preview...</div>
-      <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px;">
-        <button class="btn btn-primary" id="sendBtn" onclick="sendToGoogleDocs()" disabled>
-          <span id="sendIcon">📄</span>
-          <span id="sendText">Sign in with Google to send</span>
-        </button>
-        <div id="sendStatus" style="text-align:center;font-size:12px;color:var(--text3);min-height:18px;"></div>
-      </div>
+      <button class="btn btn-primary" id="sendBtn" onclick="sendToGoogleDocs()" disabled>
+        <span id="sendIcon">📄</span><span id="sendText">Sign in with Google to send</span>
+      </button>
+      <div id="sendStatus" style="text-align:center;font-size:12px;color:var(--text3);margin-top:10px;min-height:18px;"></div>
     </div>
   </div>
 
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
@@ -345,45 +176,71 @@ const CLIENT_ID = '564861021362-qgt93dk2dpk6r90165unitk9qkgtml5f.apps.googleuser
 const SCOPES = 'https://www.googleapis.com/auth/documents';
 let accessToken = null;
 let tokenClient = null;
+let dayCount = 0;
 
-// ── Load settings from localStorage ──
+const DEFAULT_DAYS = [
+  {label:'Monday',   date:'March 09, 2026'},
+  {label:'Tuesday',  date:'March 10, 2026'},
+  {label:'Wednesday',date:'March 11, 2026'},
+  {label:'Thursday', date:'March 12, 2026'},
+  {label:'Friday',   date:'March 13, 2026'},
+];
+
 window.addEventListener('DOMContentLoaded', () => {
-  ['docId','studentName','supervisor','coordinator','weekNum'].forEach(id => {
-    const saved = localStorage.getItem('rle_' + id);
-    if (saved) document.getElementById(id).value = saved;
+  // Restore saved settings
+  ['docId','studentName','supervisor','coordinator','weekNum','dateRange'].forEach(id => {
+    const v = localStorage.getItem('rle_'+id);
+    if (v) document.getElementById(id).value = v;
+    document.getElementById(id).addEventListener('input', e => localStorage.setItem('rle_'+id, e.target.value));
   });
-  ['docId','studentName','supervisor','coordinator','weekNum'].forEach(id => {
-    document.getElementById(id).addEventListener('input', e => {
-      localStorage.setItem('rle_' + id, e.target.value);
-    });
-  });
-  document.getElementById('reportText').addEventListener('input', updatePreview);
+  DEFAULT_DAYS.forEach(d => addDay(d));
   loadGoogleScript();
 });
 
-function changeWeek(delta) {
+function changeWeek(d) {
   const el = document.getElementById('weekNum');
-  const v = Math.max(1, Math.min(52, parseInt(el.value||5) + delta));
-  el.value = v;
-  localStorage.setItem('rle_weekNum', v);
+  el.value = Math.max(1, Math.min(52, parseInt(el.value||5)+d));
+  localStorage.setItem('rle_weekNum', el.value);
 }
 
-// ── Preview ──
-function updatePreview() {
-  const text = document.getElementById('reportText').value.trim();
-  const preview = document.getElementById('preview');
-  if (!text) {
-    preview.textContent = 'Paste your report above to see a preview...';
-    preview.classList.add('empty');
-  } else {
-    preview.textContent = text;
-    preview.classList.remove('empty');
-  }
+function addDay(data={}) {
+  const id = ++dayCount;
+  const div = document.createElement('div');
+  div.className = 'day-entry'; div.id = 'de-'+id;
+  div.innerHTML = `
+    <div class="day-entry-header">
+      <span class="day-label">${data.label||'Day '+id}</span>
+      <button class="del-day" onclick="document.getElementById('de-${id}').remove()">✕</button>
+    </div>
+    <textarea id="acc-${id}" placeholder="Paste Claude's polished accomplishment for this day...">${data.acc||''}</textarea>
+    <div class="day-meta">
+      <div style="flex:1"><label>Date</label><input type="text" id="date-${id}" value="${data.date||''}"/></div>
+      <div><label>Day</label><input type="text" id="dayname-${id}" value="${data.label||''}" style="width:100px;"/></div>
+      <div><label>Hours</label><input type="number" id="hrs-${id}" value="${data.holiday?0:8}" min="0" max="24" style="width:65px;"/></div>
+      <label class="holiday-check"><input type="checkbox" id="hol-${id}" ${data.holiday?'checked':''} onchange="toggleHoliday(${id})"/> Holiday</label>
+    </div>`;
+  document.getElementById('daysContainer').appendChild(div);
 }
 
-function clearReport() {
-  document.getElementById('reportText').value = '';
-  updatePreview();
+function toggleHoliday(id) {
+  const isHol = document.getElementById('hol-'+id).checked;
+  document.getElementById('hrs-'+id).value = isHol ? 0 : 8;
+  const acc = document.getElementById('acc-'+id);
+  acc.disabled = isHol;
+  if (isHol) acc.value = 'Holiday — no work rendered.';
+}
+
+function getDays() {
+  return Array.from(document.querySelectorAll('.day-entry')).map(el => {
+    const id = el.id.replace('de-','');
+    return {
+      date: document.getElementById('date-'+id)?.value||'',
+      day:  document.getElementById('dayname-'+id)?.value||'',
+      acc:  document.getElementById('acc-'+id)?.value||'',
+      hrs:  parseInt(document.getElementById('hrs-'+id)?.value)||0,
+      hol:  document.getElementById('hol-'+id)?.checked||false,
+    };
+  });
 }
 
 // ── Google Auth ──
@@ -392,202 +249,203 @@ function loadGoogleScript() {
   s.src = 'https://accounts.google.com/gsi/client';
   s.onload = () => {
     try {
-      google.accounts.id.initialize({ client_id: CLIENT_ID, callback: () => {} });
+      google.accounts.id.initialize({ client_id: CLIENT_ID, callback: ()=>{} });
       tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
-        scope: SCOPES,
+        client_id: CLIENT_ID, scope: SCOPES,
         callback: (resp) => {
-          if (resp.error) { showToast('Sign-in failed: ' + resp.error, 'error'); return; }
+          if (resp.error) { showToast('Sign-in failed: '+resp.error,'error'); return; }
           accessToken = resp.access_token;
-          showConnected();
-          updateSendBtn();
-          showToast('Connected to Google ✓', 'success');
+          document.getElementById('authArea').innerHTML =
+            '<div class="auth-pill connected"><span class="dot"></span> Google connected</div>'+
+            '<button class="signout" onclick="signOut()">sign out</button>';
+          document.getElementById('sendBtn').disabled = false;
+          document.getElementById('sendText').textContent = 'Send to Google Docs';
+          showToast('Connected to Google ✓','success');
         }
       });
-    } catch(e) { console.warn('Google init:', e); }
-  };
-  s.onerror = () => {
-    document.getElementById('authArea').innerHTML =
-      '<span style="font-size:11px;color:var(--red);">⚠️ Could not load Google script</span>';
+    } catch(e){ console.warn(e); }
   };
   document.head.appendChild(s);
 }
-
 function signIn() {
-  if (!tokenClient) { showToast('Please wait a moment and try again.', 'error'); return; }
+  if (!tokenClient) { showToast('Please wait a moment…','error'); return; }
   tokenClient.requestAccessToken();
 }
-
 function signOut() {
-  if (typeof google !== 'undefined' && accessToken) google.accounts.oauth2.revoke(accessToken, () => {});
+  if (typeof google!=='undefined' && accessToken) google.accounts.oauth2.revoke(accessToken,()=>{});
   accessToken = null;
   document.getElementById('authArea').innerHTML =
-    '<button class="auth-pill" id="signinBtn" onclick="signIn()"><span class="dot"></span> Sign in with Google</button>';
-  updateSendBtn();
-  showToast('Signed out.');
-}
-
-function showConnected() {
-  document.getElementById('authArea').innerHTML =
-    '<div class="auth-pill connected"><span class="dot"></span> Google connected</div>' +
-    '<button class="signout" onclick="signOut()">sign out</button>';
-}
-
-function updateSendBtn() {
-  const btn = document.getElementById('sendBtn');
-  const txt = document.getElementById('sendText');
-  if (!accessToken) {
-    btn.disabled = true;
-    txt.textContent = 'Sign in with Google to send';
-  } else {
-    btn.disabled = false;
-    txt.textContent = 'Send to Google Docs';
-  }
+    '<button class="auth-pill" onclick="signIn()"><span class="dot"></span> Sign in with Google</button>';
+  document.getElementById('sendBtn').disabled = true;
+  document.getElementById('sendText').textContent = 'Sign in with Google to send';
 }
 
 // ── Send to Google Docs ──
 async function sendToGoogleDocs() {
-  if (!accessToken) { showToast('Please sign in first!', 'error'); return; }
+  if (!accessToken) { showToast('Please sign in first!','error'); return; }
+  const days = getDays();
+  if (!days.some(d => d.acc && !d.hol)) { showToast('Please enter at least one day!','error'); return; }
 
-  const reportText = document.getElementById('reportText').value.trim();
-  if (!reportText) { showToast('Please paste your report first!', 'error'); return; }
-
-  const docId = document.getElementById('docId').value.trim();
-  if (!docId) { showToast('Please enter your Doc ID!', 'error'); return; }
-
-  const weekNum = document.getElementById('weekNum').value;
-  const studentName = document.getElementById('studentName').value;
-  const supervisor = document.getElementById('supervisor').value;
-  const coordinator = document.getElementById('coordinator').value;
-  const mode = document.getElementById('writeMode').value;
+  const docId     = document.getElementById('docId').value.trim();
+  const weekNum   = document.getElementById('weekNum').value;
+  const name      = document.getElementById('studentName').value;
+  const sup       = document.getElementById('supervisor').value;
+  const coord     = document.getElementById('coordinator').value;
 
   const btn = document.getElementById('sendBtn');
   btn.disabled = true;
   document.getElementById('sendIcon').innerHTML = '<span class="spin"></span>';
   document.getElementById('sendText').textContent = 'Writing to doc…';
-  document.getElementById('sendStatus').textContent = 'Fetching your document…';
-
-  // Build the full block to insert
-  const divider = '═'.repeat(60);
-  const block = [
-    '',
-    divider,
-    `WEEK ${weekNum} — RELATED LEARNING EXPERIENCE`,
-    divider,
-    `Student Trainee : ${studentName}`,
-    `Program         : BSIT - BUSINESS ANALYTICS`,
-    `Company         : TECH EXECUTIVE LABS I.T. SOLUTIONS`,
-    `Department      : IT DEPARTMENT`,
-    '',
-    reportText,
-    '',
-    `Prepared by:`,
-    `${studentName}`,
-    `Student Trainee`,
-    '',
-    `Noted:`,
-    `${supervisor}                    ${coordinator}`,
-    `Training Supervisor              OJT Coordinator, CICS`,
-    '',
-    divider,
-    '',
-  ].join('\n');
+  setStatus('Connecting to Google Docs…');
 
   try {
-    // Get document to find insertion point
-    document.getElementById('sendStatus').textContent = 'Reading document structure…';
-    const docRes = await fetch(`https://docs.googleapis.com/v1/documents/${docId}`, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    });
+    // 1. Get doc to find end index
+    const docRes = await fetch(`https://docs.googleapis.com/v1/documents/${docId}`,
+      { headers: { Authorization: `Bearer ${accessToken}` } });
     const doc = await docRes.json();
     if (doc.error) throw new Error(doc.error.message);
 
-    let insertIndex;
+    const endIdx = doc.body.content.at(-1).endIndex - 1;
+    setStatus('Building table structure…');
 
-    if (mode === 'replace') {
-      // Find "Week 5" section in the document content and replace it
-      document.getElementById('sendStatus').textContent = `Locating Week ${weekNum} in document…`;
+    const totalHours = days.reduce((s,d) => s+(d.hrs||0), 0);
 
-      // Search through paragraphs for the week heading
-      const content = doc.body.content;
-      let weekStartIndex = null;
-      let weekEndIndex = null;
-      let foundWeek = false;
-      let foundNextWeek = false;
+    // 2. Build batchUpdate requests
+    // We'll insert text blocks then a table
+    const requests = [];
 
-      for (let i = 0; i < content.length; i++) {
-        const el = content[i];
-        if (!el.paragraph) continue;
-        const paraText = el.paragraph.elements?.map(e => e.textRun?.content || '').join('').trim();
+    // Insert section header text first
+    const header =
+      `\n${'═'.repeat(60)}\n`+
+      `WEEK ${weekNum} — RELATED LEARNING EXPERIENCE\n`+
+      `${'═'.repeat(60)}\n`+
+      `Student Trainee : ${name}\n`+
+      `Program         : BSIT - BUSINESS ANALYTICS\n`+
+      `Company         : TECH EXECUTIVE LABS I.T. SOLUTIONS\n`+
+      `Department      : IT DEPARTMENT\n\n`;
 
-        if (!foundWeek && (paraText.includes(`Week ${weekNum}`) || paraText.includes(`WEEK ${weekNum}`))) {
-          weekStartIndex = el.startIndex;
-          foundWeek = true;
-          continue;
-        }
-        if (foundWeek && !foundNextWeek) {
-          const nextWeek = parseInt(weekNum) + 1;
-          if (paraText.includes(`Week ${nextWeek}`) || paraText.includes(`WEEK ${nextWeek}`) || paraText.includes('# **Week')) {
-            weekEndIndex = el.startIndex;
-            foundNextWeek = true;
-            break;
-          }
-        }
+    requests.push({ insertText: { location: { index: endIdx }, text: header } });
+
+    // Insert table after header
+    // Table: 1 header row + N day rows + 1 total row = rows count
+    const numRows = days.length + 2; // header + days + total
+    const numCols = 3;
+
+    requests.push({
+      insertTable: {
+        rows: numRows,
+        columns: numCols,
+        location: { index: endIdx + header.length }
       }
+    });
 
-      if (weekStartIndex !== null) {
-        // Delete existing week section then insert new one
-        const deleteEnd = weekEndIndex || doc.body.content.at(-1).endIndex - 1;
-        document.getElementById('sendStatus').textContent = 'Replacing existing content…';
+    setStatus('Writing table content…');
 
-        const requests = [];
-        // Delete old content
-        if (deleteEnd > weekStartIndex) {
-          requests.push({ deleteContentRange: { range: { startIndex: weekStartIndex, endIndex: deleteEnd } } });
-        }
-        // Insert new content at that position
-        requests.push({ insertText: { location: { index: weekStartIndex }, text: block } });
+    // We need to get the doc again after inserting to find table cell indices
+    // Instead, build all content as styled text after the table is created
+    // Send header + table insert first
+    const batch1Res = await fetch(`https://docs.googleapis.com/v1/documents/${docId}:batchUpdate`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ requests })
+    });
+    const batch1 = await batch1Res.json();
+    if (batch1.error) throw new Error(batch1.error.message);
 
-        const batchRes = await fetch(`https://docs.googleapis.com/v1/documents/${docId}:batchUpdate`, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ requests })
-        });
-        const batchData = await batchRes.json();
-        if (batchData.error) throw new Error(batchData.error.message);
-      } else {
-        // Week not found — append at end
-        showToast(`Week ${weekNum} section not found — appending at end instead.`, 'error');
-        insertIndex = doc.body.content.at(-1).endIndex - 1;
-        const appendRes = await fetch(`https://docs.googleapis.com/v1/documents/${docId}:batchUpdate`, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ requests: [{ insertText: { location: { index: insertIndex }, text: block } }] })
-        });
-        const appendData = await appendRes.json();
-        if (appendData.error) throw new Error(appendData.error.message);
+    setStatus('Filling in table cells…');
+
+    // Re-fetch doc to find table cell positions
+    const doc2Res = await fetch(`https://docs.googleapis.com/v1/documents/${docId}`,
+      { headers: { Authorization: `Bearer ${accessToken}` } });
+    const doc2 = await doc2Res.json();
+    if (doc2.error) throw new Error(doc2.error.message);
+
+    // Find the table we just inserted (last table in doc)
+    const allTables = [];
+    function findTables(elements) {
+      for (const el of elements) {
+        if (el.table) allTables.push(el.table);
+        if (el.paragraph) {} // paragraphs don't nest tables directly
       }
-    } else {
-      // Append mode
-      document.getElementById('sendStatus').textContent = 'Appending to document…';
-      insertIndex = doc.body.content.at(-1).endIndex - 1;
-      const appendRes = await fetch(`https://docs.googleapis.com/v1/documents/${docId}:batchUpdate`, {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ requests: [{ insertText: { location: { index: insertIndex }, text: block } }] })
-      });
-      const appendData = await appendRes.json();
-      if (appendData.error) throw new Error(appendData.error.message);
+    }
+    findTables(doc2.body.content);
+    const table = allTables[allTables.length - 1];
+    if (!table) throw new Error('Could not locate inserted table.');
+
+    // Build cell fill requests
+    const cellRequests = [];
+
+    // Helper: get cell start index
+    function cellIndex(row, col) {
+      return table.tableRows[row].tableCells[col].content[0].startIndex;
     }
 
-    document.getElementById('sendStatus').innerHTML =
-      `<span style="color:var(--green);">✓ Week ${weekNum} written to your Google Doc!</span> ` +
-      `<a href="https://docs.google.com/document/d/${docId}/edit" target="_blank" style="color:var(--blue);text-decoration:none;">Open doc →</a>`;
-    showToast(`Week ${weekNum} report saved to Google Docs ✓`, 'success');
+    // Header row
+    const headers = ['DATE / DAY', 'ACCOMPLISHMENTS', 'HOURS'];
+    headers.forEach((h, col) => {
+      cellRequests.push({
+        insertText: { location: { index: cellIndex(0, col) }, text: h }
+      });
+    });
+
+    // Day rows
+    days.forEach((d, i) => {
+      const row = i + 1;
+      const dateDay = `${d.date}${d.day ? ' '+d.day : ''}`;
+      const accText = d.hol ? 'Holiday — no work rendered.' : (d.acc || '—');
+      const hrsText = d.hol ? '0' : String(d.hrs || 8);
+      cellRequests.push({ insertText: { location: { index: cellIndex(row,0) }, text: dateDay } });
+      cellRequests.push({ insertText: { location: { index: cellIndex(row,1) }, text: accText } });
+      cellRequests.push({ insertText: { location: { index: cellIndex(row,2) }, text: hrsText } });
+    });
+
+    // Total row
+    const totalRow = days.length + 1;
+    cellRequests.push({ insertText: { location: { index: cellIndex(totalRow,0) }, text: 'TOTAL' } });
+    cellRequests.push({ insertText: { location: { index: cellIndex(totalRow,1) }, text: '' } });
+    cellRequests.push({ insertText: { location: { index: cellIndex(totalRow,2) }, text: String(totalHours)+' hours' } });
+
+    // Sort by index descending to avoid offset issues
+    cellRequests.sort((a,b) => {
+      const ai = a.insertText.location.index;
+      const bi = b.insertText.location.index;
+      return bi - ai;
+    });
+
+    const batch2Res = await fetch(`https://docs.googleapis.com/v1/documents/${docId}:batchUpdate`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ requests: cellRequests })
+    });
+    const batch2 = await batch2Res.json();
+    if (batch2.error) throw new Error(batch2.error.message);
+
+    // Append footer after table
+    setStatus('Adding signatures…');
+    const doc3Res = await fetch(`https://docs.googleapis.com/v1/documents/${docId}`,
+      { headers: { Authorization: `Bearer ${accessToken}` } });
+    const doc3 = await doc3Res.json();
+    const newEnd = doc3.body.content.at(-1).endIndex - 1;
+
+    const footer =
+      `\nPrepared by:\n${name}\nStudent Trainee\n\n`+
+      `Noted:\n${sup}                    ${coord}\n`+
+      `Training Supervisor              OJT Coordinator, CICS\n\n`;
+
+    const batch3Res = await fetch(`https://docs.googleapis.com/v1/documents/${docId}:batchUpdate`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ requests: [{ insertText: { location: { index: newEnd }, text: footer } }] })
+    });
+    const batch3 = await batch3Res.json();
+    if (batch3.error) throw new Error(batch3.error.message);
+
+    setStatus(`<span style="color:var(--green)">✓ Week ${weekNum} written with proper table!</span> <a href="https://docs.google.com/document/d/${docId}/edit" target="_blank" style="color:var(--blue);text-decoration:none;">Open doc →</a>`);
+    showToast(`Week ${weekNum} table written to Google Docs ✓`,'success');
 
   } catch(e) {
-    document.getElementById('sendStatus').innerHTML = `<span style="color:var(--red);">⚠️ ${e.message}</span>`;
-    showToast('Failed: ' + e.message, 'error');
+    setStatus(`<span style="color:var(--red)">⚠️ ${e.message}</span>`);
+    showToast('Failed: '+e.message,'error');
   }
 
   btn.disabled = false;
@@ -595,11 +453,11 @@ async function sendToGoogleDocs() {
   document.getElementById('sendText').textContent = 'Send to Google Docs';
 }
 
-// ── Toast ──
-function showToast(msg, type = '') {
+function setStatus(html) { document.getElementById('sendStatus').innerHTML = html; }
+function showToast(msg,type='') {
   const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'toast show ' + type;
-  setTimeout(() => t.className = 'toast', 3500);
+  t.textContent = msg; t.className = 'toast show '+type;
+  setTimeout(()=>t.className='toast',3500);
 }
 </script>
 </body>
