@@ -75,7 +75,7 @@
     <div class="brand-mark">R</div>
     <div class="brand-text">
       <h1>RLE Doc Writer</h1>
-      <p>Times New Roman · Bold · Caps · Matches your exact format</p>
+      <p>Times New Roman · Bold · Underline · Creates Week sub-tab</p>
     </div>
   </div>
   <div id="authArea">
@@ -86,10 +86,10 @@
 <div class="container">
   <div class="tip">
     <span>💡</span>
-    <span>Tell Claude your raw notes → Claude polishes each day → paste here → <b>Send to Google Docs</b> writes a properly formatted table with Times New Roman, bold headers, caps — matching your existing weeks exactly.</span>
+    <span>Tell Claude your raw notes → Claude polishes each day → paste here → <b>Send to Google Docs</b> creates a new <b>Week sub-tab</b> with your exact format.</span>
   </div>
 
-  <!-- Step 1: Settings -->
+  <!-- Step 1 -->
   <div class="card">
     <div class="card-header">
       <div class="card-num">1</div>
@@ -102,13 +102,13 @@
       </div>
       <div class="g3">
         <div><label>Program</label><input type="text" id="program" value="BSIT - BUSINESS ANALYTICS"/></div>
-        <div><label>Training Supervisor</label><input type="text" id="supervisor" value="Mr. JAZZON H. PEREZ"/></div>
-        <div><label>OJT Coordinator</label><input type="text" id="coordinator" value="Mr. DIONECES O. ALIMOREN"/></div>
+        <div><label>Training Supervisor</label><input type="text" id="supervisor" value="MR. JAZZON H. PEREZ"/></div>
+        <div><label>OJT Coordinator</label><input type="text" id="coordinator" value="MR. DIONECES O. ALIMOREN"/></div>
       </div>
     </div>
   </div>
 
-  <!-- Step 2: Days -->
+  <!-- Step 2 -->
   <div class="card">
     <div class="card-header">
       <div class="card-num">2</div>
@@ -135,11 +135,11 @@
     </div>
   </div>
 
-  <!-- Step 3: Send -->
+  <!-- Step 3 -->
   <div class="card">
     <div class="card-header">
       <div class="card-num">3</div>
-      <div><div class="card-title">Send to Google Docs</div><div class="card-desc">Writes Times New Roman, bold, caps — exact match to your existing weeks</div></div>
+      <div><div class="card-title">Send to Google Docs</div><div class="card-desc">Creates a new Week sub-tab with your exact format</div></div>
     </div>
     <div class="card-body">
       <button class="send-btn" id="sendBtn" onclick="send()" disabled>
@@ -252,42 +252,45 @@ function signOut() {
   document.getElementById('sendTxt').textContent = 'Sign in with Google to send';
 }
 
-// ── Formatting helpers ──
-// Returns a textStyle object: Times New Roman, not italic, optional bold
-function ts(bold=false) {
-  return { bold, italic: false, weightedFontFamily: { fontFamily: 'Times New Roman', weight: bold ? 700 : 400 } };
-}
+// ── Style helpers ──
+const TNR = { fontFamily: 'Times New Roman', weight: 400 };
+const TNR_BOLD = { fontFamily: 'Times New Roman', weight: 700 };
 
-// Build a updateTextStyle request for a given range
-function styleRange(startIndex, endIndex, bold=false) {
+function mkStyle(bold=false, italic=false, underline=false) {
+  return { bold, italic, underline, weightedFontFamily: bold ? TNR_BOLD : TNR };
+}
+function styleReq(start, end, bold=false, italic=false, underline=false) {
+  if (end <= start) return null;
   return {
     updateTextStyle: {
-      range: { startIndex, endIndex },
-      textStyle: ts(bold),
-      fields: 'bold,italic,weightedFontFamily'
+      range: { startIndex: start, endIndex: end },
+      textStyle: mkStyle(bold, italic, underline),
+      fields: 'bold,italic,underline,weightedFontFamily'
     }
   };
 }
-
-// Build a paragraphStyle request (alignment)
-function alignPara(startIndex, endIndex, alignment='START') {
+function alignReq(start, end, alignment='START') {
+  if (end <= start) return null;
   return {
     updateParagraphStyle: {
-      range: { startIndex, endIndex },
+      range: { startIndex: start, endIndex: end },
       paragraphStyle: { alignment },
       fields: 'alignment'
     }
   };
 }
+function addReqs(arr, req) { if (req) arr.push(req); }
 
 // ── Main send ──
 async function send() {
   if (!accessToken) { toast('Please sign in first!','error'); return; }
   const days = getDays();
-  if (!days.length) { toast('Add at least one day!','error'); return; }
+  if (!days.some(d => d.acc && d.acc.trim() && d.acc.trim() !== ' ')) {
+    toast('Please enter at least one day!','error'); return;
+  }
 
   const docId   = document.getElementById('docId').value.trim();
-  const weekNum = document.getElementById('weekNum').value;
+  const weekNum = parseInt(document.getElementById('weekNum').value);
   const name    = document.getElementById('studentName').value.trim().toUpperCase();
   const prog    = document.getElementById('program').value.trim().toUpperCase();
   const sup     = document.getElementById('supervisor').value.trim().toUpperCase();
@@ -299,19 +302,33 @@ async function send() {
   btn.disabled = true;
   document.getElementById('sendIcon').innerHTML = '<span class="spin"></span>';
   document.getElementById('sendTxt').textContent = 'Writing to doc…';
-  setStatus('Fetching document…');
 
   try {
-    // ── STEP 1: Get current end index ──
-    const r1 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
-    const insertAt = r1.body.content.at(-1).endIndex - 1;
+    // ── STEP 1: Create a new tab named "Week N" ──
+    setStatus('Creating Week sub-tab…');
+    const tabTitle = `Week ${weekNum}`;
+    const createTabRes = await fetch(`https://docs.googleapis.com/v1/documents/${docId}:batchUpdate`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        requests: [{
+          createTab: { tabProperties: { title: tabTitle } }
+        }]
+      })
+    });
+    const createTabData = await createTabRes.json();
+    if (createTabData.error) throw new Error(createTabData.error.message);
 
-    // ── STEP 2: Insert all plain text first ──
-    // We track character offsets so we can style them after
-    setStatus('Inserting content…');
+    // Get the new tab's ID from the response
+    const newTabId = createTabData.replies?.[0]?.createTab?.tabProperties?.tabId;
+    if (!newTabId) throw new Error('Could not get new tab ID. The Docs API may not support tab creation in this doc version.');
 
-    const metaBlock =
-      `\nName of Student Trainee\t:\t${name}\n`+
+    // ── STEP 2: Insert header text into the new tab ──
+    setStatus('Writing header…');
+
+    // Build header text with labels and values on same line
+    const headerText =
+      `Name of Student Trainee\t:\t${name}\n`+
       `Program\t\t\t:\t${prog}\n`+
       `Name Of Company\t\t:\tTECH EXECUTIVE LABS I.T. SOLUTIONS\n`+
       `Department\t\t:\tIT DEPARTMENT\n`+
@@ -319,158 +336,205 @@ async function send() {
       `RELATED LEARNING EXPERIENCE\n`+
       `Week ${weekNum}\n\n`;
 
-    await gBatch(docId, [{ insertText: { location: { index: insertAt }, text: metaBlock } }]);
+    // Insert into the new tab (index 1 = start of tab)
+    await gBatch(docId, [{
+      insertText: { location: { index: 1, tabId: newTabId }, text: headerText }
+    }]);
 
-    // ── STEP 3: Apply text styles to meta block ──
-    setStatus('Applying formatting…');
-    const r2 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
-    const metaStart = insertAt + 1; // skip leading \n
+    // ── STEP 3: Style the header ──
+    setStatus('Styling header…');
+    const r2 = await gFetchTab(docId, newTabId);
+    const hdrReqs = [];
 
-    // Find paragraph ranges for meta block by scanning content
-    // We'll apply Times New Roman + no-italic to the whole meta block range
-    const metaEnd = insertAt + metaBlock.length;
-
-    // Style entire meta block: TNR, not italic
-    const styleReqs = [ styleRange(metaStart, metaEnd, false) ];
-
-    // Bold the values in name/program lines — find them by scanning paragraphs
-    // Simpler: bold specific lines by finding their paragraph indices
-    const content2 = r2.body.content;
-    for (const el of content2) {
+    for (const el of r2.body.content) {
       if (!el.paragraph) continue;
       const pStart = el.startIndex;
-      const pEnd   = el.endIndex;
-      if (pStart < metaStart || pStart >= metaEnd) continue;
-      const text = el.paragraph.elements?.map(e=>e.textRun?.content||'').join('').trim();
+      const pEnd   = el.endIndex - 1;
+      if (pEnd <= pStart) continue;
+      const rawText = el.paragraph.elements?.map(e=>e.textRun?.content||'').join('').replace(/\n/g,'').trim();
 
-      // Bold: student name value, "RELATED LEARNING EXPERIENCE", "Week X", supervisor/coord values
-      if (
-        text === name ||
-        text.includes('RELATED LEARNING EXPERIENCE') ||
-        text.startsWith('Week ') ||
-        text === sup ||
-        text === coord
-      ) {
-        styleReqs.push(styleRange(pStart, pEnd-1, true));
+      // All text: TNR, not italic
+      addReqs(hdrReqs, styleReq(pStart, pEnd, false, false, false));
+
+      // Bold the VALUES (after the colon tab)
+      // Lines with ":" — bold the value part
+      if (rawText.includes(':\t')) {
+        // Find the colon+tab position within the paragraph elements
+        let charOffset = pStart;
+        let colonFound = false;
+        for (const elem of el.paragraph.elements) {
+          const txt = elem.textRun?.content || '';
+          if (!colonFound && txt.includes(':\t')) {
+            const colonPos = charOffset + txt.indexOf(':\t') + 2; // after ":\t"
+            addReqs(hdrReqs, styleReq(colonPos, pEnd, true, false, false));
+            colonFound = true;
+          }
+          charOffset += txt.length;
+        }
       }
 
-      // Center align RELATED LEARNING EXPERIENCE and Week line
-      if (text.includes('RELATED LEARNING EXPERIENCE') || text.startsWith('Week ')) {
-        styleReqs.push(alignPara(pStart, pEnd-1, 'CENTER'));
+      // RELATED LEARNING EXPERIENCE — bold + center
+      if (rawText === 'RELATED LEARNING EXPERIENCE') {
+        addReqs(hdrReqs, styleReq(pStart, pEnd, true, false, false));
+        addReqs(hdrReqs, alignReq(pStart, pEnd+1, 'CENTER'));
+      }
+
+      // Week N — bold + center
+      if (rawText === `Week ${weekNum}`) {
+        addReqs(hdrReqs, styleReq(pStart, pEnd, true, false, false));
+        addReqs(hdrReqs, alignReq(pStart, pEnd+1, 'CENTER'));
       }
     }
 
-    await gBatch(docId, styleReqs);
+    if (hdrReqs.length) await gBatch(docId, hdrReqs.map(r => ({ ...r, tabId: undefined })), newTabId);
 
     // ── STEP 4: Insert table ──
     setStatus('Creating table…');
-    const r3 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
-    const tableInsertAt = r3.body.content.at(-1).endIndex - 1;
+    const r3 = await gFetchTab(docId, newTabId);
+    const tableAt = r3.body.content.at(-1).endIndex - 1;
 
+    // Table has: 1 header row + N day rows + 1 total row
+    // But total row only spans 2 columns (merged col 0+1, col 2)
+    // We insert a 3-col table then merge later
     await gBatch(docId, [{
-      insertTable: { rows: days.length + 2, columns: 3, location: { index: tableInsertAt } }
-    }]);
+      insertTable: {
+        rows: days.length + 2,
+        columns: 3,
+        location: { index: tableAt, tabId: newTabId }
+      }
+    }], newTabId);
 
-    // ── STEP 5: Fill table cells ──
+    // ── STEP 5: Fill cells ──
     setStatus('Filling table cells…');
-    const r4 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
+    const r4 = await gFetchTab(docId, newTabId);
+    const tables4 = r4.body.content.filter(el => el.table);
+    const tbl4 = tables4[tables4.length-1].table;
 
-    const tables = r4.body.content.filter(el => el.table);
-    const tbl = tables[tables.length-1].table;
-
-    function cellStart(row, col) {
-      return tbl.tableRows[row].tableCells[col].content[0].startIndex;
+    function cIdx(row, col) {
+      return tbl4.tableRows[row].tableCells[col].content[0].startIndex;
     }
 
-    // Insert cell text — descending order
     const cellInserts = [];
 
-    // Header row
-    cellInserts.push({ insertText: { location: { index: cellStart(0,0) }, text: 'DATE\nDAY' }});
-    cellInserts.push({ insertText: { location: { index: cellStart(0,1) }, text: 'ACCOMPLISHMENTS' }});
-    cellInserts.push({ insertText: { location: { index: cellStart(0,2) }, text: 'NO. OF HOURS RENDERED' }});
+    // Header row — CAPS, will bold later
+    cellInserts.push({ insertText: { location: { index: cIdx(0,0), tabId: newTabId }, text: 'DATE\nDAY' }});
+    cellInserts.push({ insertText: { location: { index: cIdx(0,1), tabId: newTabId }, text: 'ACCOMPLISHMENTS' }});
+    cellInserts.push({ insertText: { location: { index: cIdx(0,2), tabId: newTabId }, text: 'NO. OF HOURS\nRENDERED' }});
 
     // Day rows
     days.forEach((d, i) => {
       const row = i + 1;
-      const dateDay = d.date && d.day ? `${d.date}\n${d.day}` : (d.date || d.day || ' ');
-      cellInserts.push({ insertText: { location: { index: cellStart(row,0) }, text: dateDay }});
-      cellInserts.push({ insertText: { location: { index: cellStart(row,1) }, text: d.acc||' ' }});
-      cellInserts.push({ insertText: { location: { index: cellStart(row,2) }, text: String(d.hrs) }});
+      const dateDay = [d.date, d.day].filter(Boolean).join('\n') || ' ';
+      cellInserts.push({ insertText: { location: { index: cIdx(row,0), tabId: newTabId }, text: dateDay }});
+      cellInserts.push({ insertText: { location: { index: cIdx(row,1), tabId: newTabId }, text: d.acc||' ' }});
+      cellInserts.push({ insertText: { location: { index: cIdx(row,2), tabId: newTabId }, text: String(d.hrs) }});
     });
 
-    // Total row
+    // Total row — col 0 gets "TOTAL", col 1 gets space, col 2 gets hours
+    // We'll merge col 0+1 after filling
     const totalRow = days.length + 1;
-    cellInserts.push({ insertText: { location: { index: cellStart(totalRow,0) }, text: 'TOTAL' }});
-    cellInserts.push({ insertText: { location: { index: cellStart(totalRow,1) }, text: ' ' }});
-    cellInserts.push({ insertText: { location: { index: cellStart(totalRow,2) }, text: `${total} hours` }});
+    cellInserts.push({ insertText: { location: { index: cIdx(totalRow,0), tabId: newTabId }, text: 'TOTAL' }});
+    cellInserts.push({ insertText: { location: { index: cIdx(totalRow,1), tabId: newTabId }, text: ' ' }});
+    cellInserts.push({ insertText: { location: { index: cIdx(totalRow,2), tabId: newTabId }, text: `${total} hours` }});
 
-    // Sort descending
+    // Sort descending by index
     cellInserts.sort((a,b) => b.insertText.location.index - a.insertText.location.index);
-    await gBatch(docId, cellInserts);
+    await gBatch(docId, cellInserts, newTabId);
 
-    // ── STEP 6: Style table cells ──
-    setStatus('Styling table…');
-    const r5 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
+    // ── STEP 6: Merge total row col 0+1 ──
+    setStatus('Merging total row cells…');
+    const r5 = await gFetchTab(docId, newTabId);
     const tables5 = r5.body.content.filter(el => el.table);
-    const tbl5 = tables5[tables5.length-1].table;
+    const tbl5 = tables5[tables5.length-1];
 
+    await gBatch(docId, [{
+      mergeTableCells: {
+        tableRange: {
+          tableCellLocation: {
+            tableStartLocation: { index: tbl5.startIndex, tabId: newTabId },
+            rowIndex: totalRow,
+            columnIndex: 0
+          },
+          rowSpan: 1,
+          columnSpan: 2
+        }
+      }
+    }], newTabId);
+
+    // ── STEP 7: Style all table cells ──
+    setStatus('Styling table…');
+    const r6 = await gFetchTab(docId, newTabId);
+    const tables6 = r6.body.content.filter(el => el.table);
+    const tbl6 = tables6[tables6.length-1].table;
     const tableStyleReqs = [];
 
-    tbl5.tableRows.forEach((row, rowIdx) => {
+    tbl6.tableRows.forEach((row, rowIdx) => {
+      const isHeaderRow = rowIdx === 0;
+      const isTotalRow  = rowIdx === tbl6.tableRows.length - 1;
       row.tableCells.forEach((cell, colIdx) => {
+        const isHoursCol = colIdx === (isHeaderRow ? 2 : (isTotalRow ? 1 : 2));
         cell.content.forEach(para => {
           if (!para.paragraph) return;
-          const pStart = para.startIndex;
-          const pEnd   = para.endIndex - 1;
-          if (pStart >= pEnd) return;
-
-          const isHeaderRow  = rowIdx === 0;
-          const isTotalRow   = rowIdx === tbl5.tableRows.length - 1;
-          const isHoursCol   = colIdx === 2;
+          const pS = para.startIndex;
+          const pE = para.endIndex - 1;
+          if (pE <= pS) return;
           const bold = isHeaderRow || isTotalRow;
-
-          tableStyleReqs.push(styleRange(pStart, pEnd, bold));
-
-          // Center align hours column and header row
+          addReqs(tableStyleReqs, styleReq(pS, pE, bold, false, false));
           if (isHeaderRow || isHoursCol || isTotalRow) {
-            tableStyleReqs.push(alignPara(pStart, pEnd, 'CENTER'));
+            addReqs(tableStyleReqs, alignReq(pS, pE+1, 'CENTER'));
           }
         });
       });
     });
 
-    await gBatch(docId, tableStyleReqs);
+    if (tableStyleReqs.length) await gBatch(docId, tableStyleReqs, newTabId);
 
-    // ── STEP 7: Footer ──
+    // ── STEP 8: Footer — Prepared by + Noted ──
     setStatus('Adding signatures…');
-    const r6 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
-    const footerAt = r6.body.content.at(-1).endIndex - 1;
+    const r7 = await gFetchTab(docId, newTabId);
+    const footerAt = r7.body.content.at(-1).endIndex - 1;
 
     const footerText =
-      `\nPrepared by:\n\n${name}\nStudent Trainee\n\nNoted:\n\n`+
-      `${sup}\t\t\t${coord}\n`+
+      `\nPrepared by:\n\n`+
+      `${name}\n`+
+      `Student Trainee\n\n`+
+      `Noted:\n\n`+
+      `${sup}\t\t\t\t${coord}\n`+
       `Training Supervisor\t\t\t\tOJT Coordinator, CICS\n`+
       (ref ? `\nWeekly Reflection\n${ref}\n` : '');
 
-    await gBatch(docId, [{ insertText: { location: { index: footerAt }, text: footerText } }]);
+    await gBatch(docId, [{ insertText: { location: { index: footerAt, tabId: newTabId }, text: footerText } }], newTabId);
 
     // Style footer
-    const r7 = await gFetch(`https://docs.googleapis.com/v1/documents/${docId}`);
+    setStatus('Styling signatures…');
+    const r8 = await gFetchTab(docId, newTabId);
     const footerStyleReqs = [];
-    for (const el of r7.body.content) {
-      if (!el.paragraph) continue;
-      const pStart = el.startIndex;
-      const pEnd   = el.endIndex - 1;
-      if (pStart < footerAt || pEnd <= pStart) continue;
-      const text = el.paragraph.elements?.map(e=>e.textRun?.content||'').join('').trim();
-      const isBold = text === name || text === sup || text === coord || text.includes(sup) || text.includes(coord);
-      footerStyleReqs.push(styleRange(pStart, pEnd, isBold));
-    }
-    if (footerStyleReqs.length) await gBatch(docId, footerStyleReqs);
 
-    setStatus(`<span style="color:var(--green)">✓ Week ${weekNum} written successfully!</span> <a href="https://docs.google.com/document/d/${docId}/edit" target="_blank" style="color:var(--blue);text-decoration:none;">Open doc →</a>`);
-    toast(`Week ${weekNum} written to Google Docs ✓`,'success');
+    for (const el of r8.body.content) {
+      if (!el.paragraph) continue;
+      const pS = el.startIndex;
+      const pE = el.endIndex - 1;
+      if (pS < footerAt || pE <= pS) continue;
+      const rawText = el.paragraph.elements?.map(e=>e.textRun?.content||'').join('').replace(/\n/g,'').trim();
+
+      // All footer: TNR, not italic
+      addReqs(footerStyleReqs, styleReq(pS, pE, false, false, false));
+
+      // Name — bold + underline
+      if (rawText === name) {
+        addReqs(footerStyleReqs, styleReq(pS, pE, true, false, true));
+      }
+      // Supervisor line — bold + underline each name
+      if (rawText.includes(sup) && rawText.includes(coord)) {
+        // Bold + underline the whole line (both names on same line)
+        addReqs(footerStyleReqs, styleReq(pS, pE, true, false, true));
+      }
+    }
+
+    if (footerStyleReqs.length) await gBatch(docId, footerStyleReqs, newTabId);
+
+    setStatus(`<span style="color:var(--green)">✓ Week ${weekNum} sub-tab created!</span> <a href="https://docs.google.com/document/d/${docId}/edit" target="_blank" style="color:var(--blue);text-decoration:none;">Open doc →</a>`);
+    toast(`Week ${weekNum} sub-tab created ✓`, 'success');
 
   } catch(e) {
     setStatus(`<span style="color:var(--red)">⚠️ ${e.message}</span>`);
@@ -483,22 +547,65 @@ async function send() {
   document.getElementById('sendTxt').textContent = 'Send to Google Docs';
 }
 
+// ── API helpers ──
 async function gFetch(url) {
   const res = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
   const data = await res.json();
   if (data.error) throw new Error(data.error.message);
   return data;
 }
-async function gBatch(docId, requests) {
+
+async function gFetchTab(docId, tabId) {
+  const res = await fetch(
+    `https://docs.googleapis.com/v1/documents/${docId}?includeTabsContent=true`,
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  );
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+  // Find the specific tab
+  const tab = findTab(data.tabs, tabId);
+  if (!tab) throw new Error('Tab not found: '+tabId);
+  return tab.documentTab.body ? tab.documentTab : { body: tab.documentTab.body || data };
+}
+
+function findTab(tabs, tabId) {
+  for (const tab of (tabs||[])) {
+    if (tab.tabProperties?.tabId === tabId) return tab;
+    if (tab.childTabs) {
+      const found = findTab(tab.childTabs, tabId);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+async function gBatch(docId, requests, tabId=null) {
+  // Add tabId to location of each request if provided
+  const reqs = tabId ? requests.map(r => addTabId(r, tabId)) : requests;
   const res = await fetch(`https://docs.googleapis.com/v1/documents/${docId}:batchUpdate`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ requests })
+    body: JSON.stringify({ requests: reqs, writeControl: {} })
   });
   const data = await res.json();
   if (data.error) throw new Error(data.error.message);
   return data;
 }
+
+function addTabId(req, tabId) {
+  // Deep clone and inject tabId into all location objects
+  const r = JSON.parse(JSON.stringify(req));
+  function inject(obj) {
+    if (obj && typeof obj === 'object') {
+      if ('index' in obj && !('tabId' in obj)) obj.tabId = tabId;
+      if ('startIndex' in obj && !('tabId' in obj)) obj.tabId = tabId;
+      for (const k of Object.keys(obj)) inject(obj[k]);
+    }
+  }
+  inject(r);
+  return r;
+}
+
 function setStatus(html) { document.getElementById('status').innerHTML = html; }
 function toast(msg, type='') {
   const t = document.getElementById('toast');
