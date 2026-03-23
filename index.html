@@ -321,25 +321,37 @@ async function send() {
   setStatus('Calling Apps Script…');
 
   try {
-    // Sanitize all fields — no empty strings ever
-    function s(v) { var t = (v || '').toString().trim(); return t.length > 0 ? t : ' '; }
+    // Sanitize ALL fields — guarantee no empty strings
+    function sf(v) {
+      if (v === null || v === undefined) return ' ';
+      var t = v.toString().trim();
+      return t.length > 0 ? t : ' ';
+    }
 
-    const payload = {
-      docId:       s(docId),
-      weekNum:     weekNum,
-      studentName: s(name),
-      program:     s(prog),
-      supervisor:  s(sup),
-      coordinator: s(coord),
-      reflection:  s(ref),
-      days: days.map(d => ({
-        date: s(d.date),
-        day:  s(d.day),
-        acc:  s(d.acc),
+    const cleanDays = days.map((d, i) => {
+      const cleaned = {
+        date: sf(d.date),
+        day:  sf(d.day),
+        acc:  d.hol ? 'Holiday - no work rendered.' : sf(d.acc),
         hrs:  parseInt(d.hrs) || 0,
         hol:  !!d.hol
-      }))
+      };
+      console.log('Day ' + i + ':', JSON.stringify(cleaned));
+      return cleaned;
+    });
+
+    const payload = {
+      docId:       sf(docId),
+      weekNum:     parseInt(weekNum) || 1,
+      studentName: sf(name),
+      program:     sf(prog),
+      supervisor:  sf(sup),
+      coordinator: sf(coord),
+      reflection:  sf(ref),
+      days:        cleanDays
     };
+
+    console.log('Sending payload:', JSON.stringify(payload));
 
     const res = await fetch(scriptUrl, {
       method: 'POST',
