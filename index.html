@@ -321,19 +321,23 @@ async function send() {
   setStatus('Calling Apps Script…');
 
   try {
+    // Sanitize all fields — no empty strings ever
+    function s(v) { var t = (v || '').toString().trim(); return t.length > 0 ? t : ' '; }
+
     const payload = {
-      docId, weekNum,
-      studentName: name,
-      program: prog,
-      supervisor: sup,
-      coordinator: coord,
-      reflection: ref,
+      docId:       s(docId),
+      weekNum:     weekNum,
+      studentName: s(name),
+      program:     s(prog),
+      supervisor:  s(sup),
+      coordinator: s(coord),
+      reflection:  s(ref),
       days: days.map(d => ({
-        date: d.date,
-        day:  d.day,
-        acc:  d.acc || ' ',
-        hrs:  d.hrs,
-        hol:  d.hol
+        date: s(d.date),
+        day:  s(d.day),
+        acc:  s(d.acc),
+        hrs:  parseInt(d.hrs) || 0,
+        hol:  !!d.hol
       }))
     };
 
