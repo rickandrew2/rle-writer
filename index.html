@@ -371,7 +371,13 @@ async function send() {
       throw new Error('Could not parse response: ' + text.substring(0, 300));
     }
 
-    if (!result.success) throw new Error((result.error || 'Apps Script error') + (result.stack ? '\n' + result.stack.split('\n').slice(0,3).join(' | ') : ''));
+    if (!result.success) {
+      console.log('FULL ERROR:', result.error);
+      console.log('FULL STACK:', result.stack);
+      // Show the full error in the status div
+      setStatus('<span style="color:var(--red)">⚠️ ' + (result.error||'error') + '<br><small>' + (result.stack||'').split('\\n').slice(0,5).join('<br>') + '</small></span>');
+      throw new Error(result.error || 'Apps Script error');
+    }
 
     const docUrl = result.docUrl || `https://docs.google.com/document/d/${docId}/edit`;
     setStatus(`<span style="color:var(--green)">✓ Week ${weekNum} doc created!</span> <a href="${docUrl}" target="_blank" style="color:var(--blue);text-decoration:none;">Open new doc →</a>`);
