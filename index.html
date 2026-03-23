@@ -353,15 +353,23 @@ async function send() {
 
     console.log('Sending payload:', JSON.stringify(payload));
 
+    // Apps Script redirects POST to a new URL — must follow redirect manually
     const res = await fetch(scriptUrl, {
       method: 'POST',
+      redirect: 'follow',
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(payload)
     });
 
     const text = await res.text();
     let result;
-    try { result = JSON.parse(text); } catch(e) { throw new Error('Invalid response from Apps Script: ' + text.substring(0,200)); }
+    try {
+      // Apps Script sometimes wraps in HTML on error — try to find JSON
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      result = JSON.parse(jsonMatch ? jsonMatch[0] : text);
+    } catch(e) {
+      throw new Error('Could not parse response: ' + text.substring(0, 300));
+    }
 
     if (!result.success) throw new Error((result.error || 'Apps Script error') + (result.stack ? '\n' + result.stack.split('\n').slice(0,3).join(' | ') : ''));
 
