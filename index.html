@@ -347,7 +347,7 @@ async function send() {
     let result;
     try { result = JSON.parse(text); } catch(e) { throw new Error('Invalid response from Apps Script: ' + text.substring(0,200)); }
 
-    if (!result.success) throw new Error(result.error || 'Apps Script returned an error');
+    if (!result.success) throw new Error((result.error || 'Apps Script error') + (result.stack ? '\n' + result.stack.split('\n').slice(0,3).join(' | ') : ''));
 
     const docUrl = result.docUrl || `https://docs.google.com/document/d/${docId}/edit`;
     setStatus(`<span style="color:var(--green)">✓ Week ${weekNum} doc created!</span> <a href="${docUrl}" target="_blank" style="color:var(--blue);text-decoration:none;">Open new doc →</a>`);
